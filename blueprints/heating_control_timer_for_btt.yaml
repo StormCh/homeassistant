@@ -35,18 +35,16 @@ mode: restart
 max_exceeded: silent
 
 trigger:
-  - platform: event
-    event_type: timer.start
-    event_data:
-      entity_id: !input timer_helper
-  - platform: event
-    event_type: timer.finished
-    event_data:
-      entity_id: !input timer_helper
+  - platform: state
+    entity_id: !input timer_helper
+    to: "active"
+  - platform: state
+    entity_id: !input timer_helper
+    to: "active"
 condition: []
 action:
   - if:
-      - condition: event
+      - condition: state
         entity_id: !input timer_helper
         event_type: timer.start
     then:
