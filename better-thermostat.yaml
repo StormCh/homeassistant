@@ -52,6 +52,7 @@ action:
       - service: climate.set_hvac_mode
         data:
           hvac_mode: heat
+        target: !input thermostat_target
       - service: better_thermostat.set_temp_target_temperature
         data:
           temperature: !input set_bt_temp
@@ -60,6 +61,7 @@ action:
       - service: climate.set_hvac_mode
         data:
           hvac_mode: "off"
+        target: !input thermostat_target
       - service: better_thermostat.restore_saved_target_temperature
         data: {}
         target: !input thermostat_target
