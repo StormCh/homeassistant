@@ -41,11 +41,11 @@ trigger:
   - platform: event
     event_type: timer.start
     event_data:
-      entity_id: !input timer_entity
+      entity_id: !input timer_helper
   - platform: event
     event_type: timer.finished
     event_data:
-      entity_id: !input timer_entity
+      entity_id: !input timer_helper
 condition: []
 action:
   - if:
