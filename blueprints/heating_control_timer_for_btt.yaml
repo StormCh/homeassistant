@@ -1,0 +1,87 @@
+blueprint:
+  name: Heating Control for BT Thermostats
+  description: "Heating control blueprint for BT Thermostats with timer helper. Means, switch HVAC_Mode to *heat* and Temp to *value* when timer begins and switch HVAC_Mode to *off* and reset Temp when timer ends."
+  domain: automation
+  source_url: https://github.com/StormCh/homeassistant/blob/main/better-thermostat.yaml
+  input:
+    include_timer_helper:
+      name: Use The Timer Helper Options (Optional)
+      description: By adding a timer helper it will survive a Home Assistant restart and resume its time.
+        It also allows you to display the time in a dashboard. 
+
+        
+        **Note** - When creating your timer helper, make sure you tick the box to restore so it will survive a HA restart 
+        and don't set any time in the timer helper duration, use the time settings below.
+      default: disable_timer_helper
+      selector:
+        select:
+          options:
+            - label: Use a timer helper
+              value: "enable_timer_helper"
+            - label: Dont use a timer helper
+              value: "disable_timer_helper"
+    timer_helper:
+      name: Timer Helper
+      description: Select the timer helper to be used if you have chosen to use a timer helper above.
+      default: []
+      selector:
+        entity:
+          filter:
+            domain:
+              - timer
+              
+    thermostat_target:
+      name: Thermostats
+      selector:
+        target:
+          device:
+            integration: better_thermostat
+          entity:
+            integration: better_thermostat
+            domain: climate
+
+    set_bt_temp:
+      name: Set Temperature
+      description: Set the target temperature
+      default: 22
+      selector:
+        number:
+          min: 5
+          max: 35
+          unit_of_measurement: °C
+
+mode: queued
+max_exceeded: silent
+
+trigger:
+  - platform: state
+    entity_id: !input timer_helper
+    from: "idle"
+    to: "active"
+  - platform: state
+    entity_id: !input timer_helper
+    from: "active"
+    to: "idle"
+condition: []
+action:
+  - if:
+      - condition: state
+        entity_id: !input timer_helper
+        state: "active"
+    then:
+      - service: climate.set_hvac_mode
+        data:
+          hvac_mode: heat
+        target: !input thermostat_target
+      - service: better_thermostat.set_temp_target_temperature
+        data:
+          temperature: !input set_bt_temp
+        target: !input thermostat_target
+    else:
+      - service: climate.set_hvac_mode
+        data:
+          hvac_mode: "off"
+        target: !input thermostat_target
+      - service: better_thermostat.restore_saved_target_temperature
+        data: {}
+        target: !input thermostat_target
