@@ -40,13 +40,13 @@ trigger:
     to: "active"
   - platform: state
     entity_id: !input timer_helper
-    to: "active"
+    to: "idle"
 condition: []
 action:
   - if:
       - condition: state
         entity_id: !input timer_helper
-        event_type: timer.start
+        state: "active"
     then:
       - service: climate.set_hvac_mode
         data:
