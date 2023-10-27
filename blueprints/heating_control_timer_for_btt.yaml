@@ -10,7 +10,7 @@ blueprint:
       selector:
         entity:
           domain: timer
-              
+
     thermostat_target:
       name: Thermostats
       selector:
