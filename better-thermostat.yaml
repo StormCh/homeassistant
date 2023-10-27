@@ -49,11 +49,17 @@ action:
         entity_id: !input bt_times_schedule
         state: "on"
     then:
+      - service: climate.set_hvac_mode
+        data:
+          hvac_mode: heat
       - service: better_thermostat.set_temp_target_temperature
         data:
           temperature: !input set_bt_temp
         target: !input thermostat_target
     else:
+      - service: climate.set_hvac_mode
+        data:
+          hvac_mode: "off"
       - service: better_thermostat.restore_saved_target_temperature
         data: {}
         target: !input thermostat_target
