@@ -1,6 +1,6 @@
 blueprint:
-  name: Better Thermostat Control
-  description: Set BT Thermostats if Schedule event is active.
+  name: Heating Control for Better Thermostats
+  description: This is a heating control blueprint for BT Thermostats if Schedule event is active.
   domain: automation
   source_url: https://github.com/StormCh/homeassistant/blob/main/better-thermostat.yaml
   input:
