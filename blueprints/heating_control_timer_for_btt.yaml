@@ -4,25 +4,9 @@ blueprint:
   domain: automation
   source_url: https://github.com/StormCh/homeassistant/blob/main/better-thermostat.yaml
   input:
-    include_timer_helper:
-      name: Use The Timer Helper Options (Optional)
-      description: By adding a timer helper it will survive a Home Assistant restart and resume its time.
-        It also allows you to display the time in a dashboard. 
-
-        
-        **Note** - When creating your timer helper, make sure you tick the box to restore so it will survive a HA restart 
-        and don't set any time in the timer helper duration, use the time settings below.
-      default: disable_timer_helper
-      selector:
-        select:
-          options:
-            - label: Use a timer helper
-              value: "enable_timer_helper"
-            - label: Dont use a timer helper
-              value: "disable_timer_helper"
     timer_helper:
       name: Timer Helper
-      description: Select the timer helper to be used if you have chosen to use a timer helper above.
+      description: Select the timer helper.
       default: []
       selector:
         entity:
@@ -50,24 +34,24 @@ blueprint:
           max: 35
           unit_of_measurement: °C
 
-mode: queued
+mode: restart
 max_exceeded: silent
 
 trigger:
-  - platform: state
-    entity_id: !input timer_helper
-    from: "idle"
-    to: "active"
-  - platform: state
-    entity_id: !input timer_helper
-    from: "active"
-    to: "idle"
+  - platform: event
+    event_type: timer.start
+    event_data:
+      entity_id: !input timer_entity
+  - platform: event
+    event_type: timer.finished
+    event_data:
+      entity_id: !input timer_entity
 condition: []
 action:
   - if:
-      - condition: state
+      - condition: event
         entity_id: !input timer_helper
-        state: "active"
+        event_type: timer.start
     then:
       - service: climate.set_hvac_mode
         data:
