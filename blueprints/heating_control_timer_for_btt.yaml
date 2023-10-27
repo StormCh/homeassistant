@@ -7,12 +7,9 @@ blueprint:
     timer_helper:
       name: Timer Helper
       description: Select the timer helper.
-      default: []
       selector:
         entity:
-          filter:
-            domain:
-              - timer
+          domain: timer
               
     thermostat_target:
       name: Thermostats
