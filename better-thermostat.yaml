@@ -2,7 +2,7 @@ blueprint:
   name: Better Thermostat Control
   description: Set BT Thermostats if Schedule event is active.
   domain: automation
-  source_url: https://github.com/KartoffelToby/better_thermostat/blob/master/blueprints/night_mode.yaml
+  source_url: https://github.com/StormCh/homeassistant/blob/main/better-thermostat.yaml
   input:
     night_times_schedule:
       name: Schedule helper
