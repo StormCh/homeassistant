@@ -2,7 +2,7 @@ blueprint:
   name: Heating Control Schedule for BT Thermostats
   description: "Heating control blueprint for BT Thermostats if Schedule event is active. Means, switch HVAC_Mode to *heat* and Temp to *value* when schedule begins and switch HVAC_Mode to *off* and reset Temp when schedule ends."
   domain: automation
-  source_url: https://github.com/StormCh/homeassistant/blob/main/better-thermostat.yaml
+  source_url: https://github.com/StormCh/homeassistant/blob/main/blueprints/heating_control_for_btt.yaml
   input:
     bt_times_schedule:
       name: Schedule helper
