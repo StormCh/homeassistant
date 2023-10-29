@@ -3,7 +3,7 @@ blueprint:
   description: >
     # Heating Control Timer for BT Thermostats
     
-    **Version 0.3**
+    **Version 0.4**
 
     Heating control blueprint for BT Thermostats with timer helper.
     Means, switch HVAC_Mode to *heat* and Temperature to *value* when timer begins and reset to last saved Temperature when timer ends.
