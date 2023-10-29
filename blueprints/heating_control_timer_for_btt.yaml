@@ -16,7 +16,7 @@ blueprint:
   input:
     timer_helper:
       name: Timer *
-      description: Select the helper.
+      description: Select the used Timer.
       selector:
         entity:
           domain: timer
