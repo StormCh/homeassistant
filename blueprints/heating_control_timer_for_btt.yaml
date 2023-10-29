@@ -66,9 +66,6 @@ action:
           value_template: >
             {{ trigger.to_state.state == "active" }}
       sequence: 
-        - service: timer.start
-          data:
-            entity_id: !input timer_helper
         - service: climate.set_hvac_mode
           data:
             hvac_mode: heat
