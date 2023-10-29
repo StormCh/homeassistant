@@ -60,27 +60,28 @@ condition: []
 
 action:
   choose:
-  # Timer starts
-  - condition: template
-    value_template: >
-      {{ trigger.to_state.state == "active" }}
-    sequence: 
-      - service: climate.set_hvac_mode
-        data:
-          hvac_mode: heat
-        target: !input thermostat_target
-      - service: better_thermostat.set_temp_target_temperature
-        data:
-          temperature: !input set_bt_temp
-        target: !input thermostat_target
-  # Timer expires
-  - condition: template
-    value_template: >
-      {{ trigger.to_state.state == "idle" }}
-    sequence:
-      - service: better_thermostat.restore_saved_target_temperature
-        data: {}
-        target: !input thermostat_target
+    # Timer starts
+    - condition: template
+      value_template: >
+        {{ trigger.to_state.state == "active" }}
+      sequence: 
+        - service: climate.set_hvac_mode
+          data:
+            hvac_mode: heat
+          target: !input thermostat_target
+        - service: better_thermostat.set_temp_target_temperature
+          data:
+            temperature: !input set_bt_temp
+          target: !input thermostat_target
+    # Timer expires
+    - condition: template
+      value_template: >
+        {{ trigger.to_state.state == "idle" }}
+      sequence:
+        - service: better_thermostat.restore_saved_target_temperature
+          data: {}
+          target: !input thermostat_target
+
 
 #  - if:
 #      #- condition: state
