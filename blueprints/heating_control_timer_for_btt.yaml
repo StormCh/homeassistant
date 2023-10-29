@@ -50,20 +50,11 @@ variables:
 
 trigger:
   - platform: state
-    entity_id: !input trigger_input
-    to: "on"
-    id: 't0'
-  - platform: state
-    entity_id: !input trigger_input
-    id: 't1'
-  - platform: state
     entity_id: !input timer_helper
     to: "active"
-    id: "t2"
   - platform: state
     entity_id: !input timer_helper
     to: "idle"
-    id: 't3'
 
 condition: []
 
