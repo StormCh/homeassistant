@@ -3,7 +3,7 @@ blueprint:
   description: >
     # Heating Control Schedule for BT Thermostats
 
-    ** Version 0.1 **
+    **Version 0.1**
 
     Heating control blueprint for BT Thermostats if Schedule event is active.
     Means, switch HVAC_Mode to *heat* and Temperature to *value* when schedule begins and reset last saved Temperature when schedule ends.
