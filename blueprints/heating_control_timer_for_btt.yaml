@@ -3,7 +3,7 @@ blueprint:
   description: >
     # Heating Control Timer for BT Thermostats
     
-    **Version 0.2**
+    **Version 0.3**
 
     Heating control blueprint for BT Thermostats with timer helper.
     Means, switch HVAC_Mode to *heat* and Temperature to *value* when timer begins and reset to last saved Temperature when timer ends.
@@ -40,22 +40,6 @@ blueprint:
           max: 35
           unit_of_measurement: °C
 
-    trigger_input:
-      name: Trigger *
-      description: The trigger to start the timer. Example - Press Button, Press Mechanism, Motion Sensor, Contact Sensor, Door Sensor, etc.
-      selector:
-        entity:
-          filter:
-            domain:
-              - switch
-              - light
-              - sensor
-              - schedule
-              - binary_sensor
-              - input_boolean
-              - input_button
-          multiple: true
-
 mode: restart
 max_exceeded: silent
 
@@ -63,7 +47,6 @@ variables:
   timer_helper: !input timer_helper
   thermostat_target: !input thermostat_target
   set_bt_temp: !input set_bt_temp
-  trigger_input: !input trigger_input
 
 trigger:
   - platform: state
@@ -73,26 +56,24 @@ trigger:
   - platform: state
     entity_id: !input trigger_input
     id: 't1'
-  #- platform: state
-  #  entity_id: !input timer_helper
-  #  to: "active"
+  - platform: state
+    entity_id: !input timer_helper
+    to: "active"
+    id: "t2"
   - platform: state
     entity_id: !input timer_helper
     to: "idle"
-    id: 't2'
+    id: 't3'
 
 condition: []
 
 action:
-  - if:
-      #- condition: state
-      #  entity_id: !input timer_helper
-      #  state: "active"
-      - condition: trigger
-        id:
-          - 't0'
-          - 't1'
-    then:
+  choose:
+  # Timer starts
+  - condition: template
+    value_template: >
+      {{ trigger.to_state.state == "active" }}
+    sequence: 
       - service: climate.set_hvac_mode
         data:
           hvac_mode: heat
@@ -101,11 +82,37 @@ action:
         data:
           temperature: !input set_bt_temp
         target: !input thermostat_target
-    else:
-      #- service: climate.set_hvac_mode
-      #  data:
-      #    hvac_mode: "off"
-      #  target: !input thermostat_target
+  # Timer expires
+  - condition: template
+    value_template: >
+      {{ trigger.to_state.state == "idle" }}
+    sequence:
       - service: better_thermostat.restore_saved_target_temperature
         data: {}
         target: !input thermostat_target
+
+#  - if:
+#      #- condition: state
+#      #  entity_id: !input timer_helper
+#      #  state: "active"
+#      - condition: trigger
+#        id:
+#          - 't0'
+#          - 't1'
+#    then:
+#      - service: climate.set_hvac_mode
+#        data:
+#          hvac_mode: heat
+#        target: !input thermostat_target
+#      - service: better_thermostat.set_temp_target_temperature
+#        data:
+#          temperature: !input set_bt_temp
+#        target: !input thermostat_target
+#    else:
+#      #- service: climate.set_hvac_mode
+#      #  data:
+#      #    hvac_mode: "off"
+#      #  target: !input thermostat_target
+#      - service: better_thermostat.restore_saved_target_temperature
+#        data: {}
+#        target: !input thermostat_target
