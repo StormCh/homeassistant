@@ -3,10 +3,11 @@ blueprint:
   description: >
     # Heating Control Timer for BT Thermostats
     
-    **Version 0.6**
+    **Version 0.8**
 
-    Heating control blueprint for BT Thermostats with timer helper.
-    Means, switch HVAC_Mode to *heat* and Temperature to *value* when timer begins and reset to last saved Temperature when timer ends.
+    Heating control blueprint for BT Thermostats with Timer.
+    Means, switch HVAC_Mode to *heat* and Temperature to *value* when Timer starts and reset to last saved Temperature when Timers expires.
+    You have to create an automation and create a Button Card for start/stop Timers via Lovelace.
 
     Required = *
 
@@ -14,8 +15,8 @@ blueprint:
   source_url: https://github.com/StormCh/homeassistant/blob/main/blueprints/heating_control_timer_for_btt.yaml
   input:
     timer_helper:
-      name: Timer Helper *
-      description: Select the timer helper.
+      name: Timer *
+      description: Select the helper.
       selector:
         entity:
           domain: timer
@@ -83,30 +84,10 @@ action:
         - service: better_thermostat.restore_saved_target_temperature
           data: {}
           target: !input thermostat_target
-
-
-#  - if:
-#      #- condition: state
-#      #  entity_id: !input timer_helper
-#      #  state: "active"
-#      - condition: trigger
-#        id:
-#          - 't0'
-#          - 't1'
-#    then:
-#      - service: climate.set_hvac_mode
-#        data:
-#          hvac_mode: heat
-#        target: !input thermostat_target
-#      - service: better_thermostat.set_temp_target_temperature
-#        data:
-#          temperature: !input set_bt_temp
-#        target: !input thermostat_target
-#    else:
-#      #- service: climate.set_hvac_mode
-#      #  data:
-#      #    hvac_mode: "off"
-#      #  target: !input thermostat_target
-#      - service: better_thermostat.restore_saved_target_temperature
-#        data: {}
-#        target: !input thermostat_target
+        - service: climate.set_hvac_mode
+          data:
+            hvac_mode: "off"
+          target: !input thermostat_target  
+        #- service: better_thermostat.reset_heating_power # this currently throws an error, thats why using service above
+        #  data: {}
+        #  target: !input thermostat_target
