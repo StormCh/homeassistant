@@ -61,7 +61,7 @@ condition: []
 
 action:
   choose:
-    # Timer starts
+    # Timer starts, this event is fired by timer event
     - conditions:
         - condition: template
           value_template: >
@@ -75,7 +75,7 @@ action:
           data:
             temperature: !input set_bt_temp
           target: !input thermostat_target
-    # Timer expires
+    # Timer expires, this event is fired by timer event
     - conditions: 
         - condition: template
           value_template: >
