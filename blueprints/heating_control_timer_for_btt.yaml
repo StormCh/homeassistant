@@ -3,7 +3,7 @@ blueprint:
   description: >
     # Heating Control Timer for BT Thermostats
     
-    **Version 0.4**
+    **Version 0.5**
 
     Heating control blueprint for BT Thermostats with timer helper.
     Means, switch HVAC_Mode to *heat* and Temperature to *value* when timer begins and reset to last saved Temperature when timer ends.
@@ -61,9 +61,10 @@ condition: []
 action:
   choose:
     # Timer starts
-    - condition: template
-      value_template: >
-        {{ trigger.to_state.state == "active" }}
+    - conditions:
+        - condition: template
+          value_template: >
+            {{ trigger.to_state.state == "active" }}
       sequence: 
         - service: climate.set_hvac_mode
           data:
@@ -74,9 +75,10 @@ action:
             temperature: !input set_bt_temp
           target: !input thermostat_target
     # Timer expires
-    - condition: template
-      value_template: >
-        {{ trigger.to_state.state == "idle" }}
+    - conditions: 
+        - condition: template
+          value_template: >
+            {{ trigger.to_state.state == "idle" }}
       sequence:
         - service: better_thermostat.restore_saved_target_temperature
           data: {}
