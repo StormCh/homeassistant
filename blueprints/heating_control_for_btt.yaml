@@ -3,7 +3,7 @@ blueprint:
   description: >
     # Heating Control Schedule for BT Thermostats
 
-    **Version 0.2**
+    **Version 0.3**
 
     Heating control blueprint for BT Thermostats if Schedule event is active.
     Means, switch HVAC_Mode to *heat* and Temperature to *value* when schedule begins and reset last saved Temperature when schedule ends.
@@ -17,6 +17,10 @@ blueprint:
     ### Version 0.2
 
     reset temperature to X after heating
+
+    ### Version 0.3
+
+    add device_tracker, only heat if someone is at home
 
   domain: automation
   source_url: https://github.com/StormCh/homeassistant/blob/main/blueprints/heating_control_for_btt.yaml
@@ -59,6 +63,15 @@ blueprint:
           step: 0.5
           unit_of_measurement: °C
 
+    trackees:
+      name: Is at home
+      description: Start heating only if someone is at home
+      selector:
+        entity:
+          filter:
+            - domain: device_tracker
+          multiple: true
+
 mode: queued
 max_exceeded: silent
 
@@ -77,6 +90,9 @@ action:
       - condition: state
         entity_id: !input bt_times_schedule
         state: "on"
+      - condition: state
+        entity_id: !input trackees
+        state: home
     then:
       - service: climate.set_hvac_mode
         data:
