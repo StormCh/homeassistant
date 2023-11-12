@@ -69,6 +69,7 @@ variables:
   timer_helper: !input timer_helper
   thermostat_target: !input thermostat_target
   set_bt_temp: !input set_bt_temp
+  set_bt_temp_after: !input set_bt_temp_after
 
 trigger:
   - platform: state
