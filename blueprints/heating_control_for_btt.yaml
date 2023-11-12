@@ -12,17 +12,17 @@ blueprint:
 
     ## History
 
-    ### Version 0.1
+    ### Version 0.3
 
-    initial Version
+    add device_tracker, only heat if someone is at home
 
     ### Version 0.2
 
     reset temperature to X after heating
 
-    ### Version 0.3
+    ### Version 0.1
 
-    add device_tracker, only heat if someone is at home
+    initial Version
 
   domain: automation
   source_url: https://github.com/StormCh/homeassistant/blob/main/blueprints/heating_control_for_btt.yaml
