@@ -56,7 +56,7 @@ blueprint:
 
     input_persons:
       name: Person at home *
-      description: Presence, start heating only if someone is at home
+      description: Presence, start heating only if someone (one of there persons) is at home.
       default: []
       selector:
         entity:
@@ -73,6 +73,7 @@ blueprint:
 
     thermostat_target:
       name: Thermostats *
+      description: Choose the thermostats to be used for heating.
       selector:
         target:
           device:
