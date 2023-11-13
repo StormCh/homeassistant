@@ -83,7 +83,7 @@ blueprint:
 
     set_bt_temp:
       name: Set Temperature
-      description: Set the target temperature
+      description: Set the heating temperature
       default: 20
       selector:
         number:
@@ -94,7 +94,7 @@ blueprint:
 
     set_bt_temp_after:
       name: Reset Temperature
-      description: Reset the Temperature to after Heating
+      description: Reset the temperature after heating
       default: 17
       selector:
         number:
