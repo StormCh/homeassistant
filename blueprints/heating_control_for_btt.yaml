@@ -6,6 +6,7 @@ blueprint:
     **Version 0.4**
 
     ## How it works
+    
     Heating control blueprint for BT Thermostats if Schedule event is active. Scheduler can be added in the helpers section in your home assistant settings.
     
     ### Basic function
