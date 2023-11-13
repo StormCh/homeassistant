@@ -44,19 +44,19 @@ blueprint:
   input:
     date_from:
       name: Date from *
-      description: Select date to start heating period. For example 31. October.
+      description: (Required) Select date to start heating period. For example 31. October. 
       selector:
         date:
 
     date_to:
       name: Date to *
-      description: Select date to end heating period. For example 31. March.
+      description: (Required) Select date to end heating period. For example 31. March.
       selector:
         date:
 
     input_persons:
       name: Person at home *
-      description: Presence, start heating only if someone (one of there persons) is at home.
+      description: (Required) Presence, start heating only if someone (one of there persons) is at home.
       default: []
       selector:
         entity:
@@ -66,14 +66,14 @@ blueprint:
 
     bt_times_schedule:
       name: Scheduler *
-      description: Used Scheduler. Scheduler can be added in the helpers section in your home assistant settings.
+      description: (Required) Used Scheduler. Scheduler can be added in the helpers section in your home assistant settings.
       selector:
         entity:
           domain: schedule
 
     thermostat_target:
       name: Thermostats *
-      description: Choose the thermostats to be used for heating.
+      description: (Required) Choose the thermostats to be used for heating.
       selector:
         target:
           device:
@@ -84,7 +84,7 @@ blueprint:
 
     set_bt_temp:
       name: Set Temperature
-      description: Set the heating temperature
+      description: Set the heating temperature.
       default: 20
       selector:
         number:
@@ -95,7 +95,7 @@ blueprint:
 
     set_bt_temp_after:
       name: Reset Temperature
-      description: Reset the temperature after heating
+      description: Reset the temperature after heating.
       default: 17
       selector:
         number:
