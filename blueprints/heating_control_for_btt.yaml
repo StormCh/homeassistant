@@ -12,8 +12,8 @@ blueprint:
     ### Basic function
 
     * current date must be in between *date from* and *date to*. Year is ignored.
-    * switch HVAC_Mode to *heat* and Temperature to *Set Temperature value* when schedule begins and reset to *Reset Temperatur value* when schedule ends.
     * runs only if someone is at home, uses *Person at home*
+    * switch HVAC_Mode to *heat* and Temperature to *Set Temperature value* when schedule begins and reset to *Reset Temperatur value* when schedule ends.
 
     Required = *
 
@@ -33,7 +33,7 @@ blueprint:
 
     ### Version 0.2
 
-    reset temperature to X after heating
+    reset temperature after heating
 
     ### Version 0.1
 
