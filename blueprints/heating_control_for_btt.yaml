@@ -3,14 +3,24 @@ blueprint:
   description: >
     # Heating Control Schedule for BT Thermostats
 
-    **Version 0.3**
+    **Version 0.4**
 
-    Heating control blueprint for BT Thermostats if Schedule event is active.
-    Means, switch HVAC_Mode to *heat* and Temperature to *value* when schedule begins and reset last saved Temperature when schedule ends.
+    ## How it works
+    Heating control blueprint for BT Thermostats if Schedule event is active. Scheduler can be added in the helpers section in your home assistant settings.
+    
+    ### Basic function
+
+    * current date must be in between *date from* and *date to*. Year is ignored.
+    * switch HVAC_Mode to *heat* and Temperature to *Set Temperature value* when schedule begins and reset to *Reset Temperatur value* when schedule ends.
+    * runs only if someone is at home, uses *Person at home*
 
     Required = *
 
     ## History
+
+    ### Version 0.4
+
+    add date from and date to for heating period
 
     ### Version 0.3
 
@@ -27,6 +37,18 @@ blueprint:
   domain: automation
   source_url: https://github.com/StormCh/homeassistant/blob/main/blueprints/heating_control_for_btt.yaml
   input:
+    date_from:
+      name: Date from *
+      description: Select date to start heating period. For example 31. October
+      selector:
+        date:
+
+    date_to:
+      name: Date to *
+      description: Select date to end heating period. For example 31. March
+      selector:
+        date:
+
     bt_times_schedule:
       name: Schedule helper *
       selector:
@@ -67,7 +89,7 @@ blueprint:
 
     input_persons:
       name: Person at home *
-      description: Start heating only if someone is at home
+      description: Presence, start heating only if someone is at home!
       default: []
       selector:
         entity:
@@ -79,6 +101,8 @@ mode: queued
 max_exceeded: silent
 
 variables:
+  date_from: !input date_from
+  date_to: !input date_to
   bt_times_schedule: !input bt_times_schedule
   input_persons: !input input_persons
   thermostat_target: !input thermostat_target
@@ -98,7 +122,13 @@ condition: []
 action:
   - variables:
       is_anybody_home: "{{ expand(input_persons) | selectattr('state', 'eq', 'home') | list | count > 0 }}"
+      date_from_month: "{{ (date_from | as_datetime).month }}"
+      date_from_day: "{{ (date_from | as_datetime).day }}"
+      date_to_month: "{{ (date_to | as_datetime).month }}"
+      date_to_day: "{{ (date_to | as_datetime).day }}"
   - if:
+      - condition: template
+        value_template: "{{ (now().year,date_from_month,date_from_day) <= ( now().year, now().month, now().day) <= (now().year+1,date_to_month,date_to_day) }}"
       - condition: state
         entity_id: !input bt_times_schedule
         state: "on"
