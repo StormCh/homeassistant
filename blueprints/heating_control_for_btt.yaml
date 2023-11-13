@@ -11,9 +11,9 @@ blueprint:
     
     ### Basic function
 
-    * current date must be in between *date from* and *date to*. Year is ignored.
-    * runs only if someone is at home, uses *Person at home*
-    * switch HVAC_Mode to *heat* and Temperature to *Set Temperature value* when schedule begins and reset to *Reset Temperatur value* when schedule ends.
+      * current date must be in between *date from* and *date to*. Year is ignored.
+      * runs only if someone is at home, uses *Person at home*
+      * switch HVAC_Mode to *heat* and Temperature to *Set Temperature value* when schedule begins and reset to *Reset Temperatur value* when schedule ends.
 
     Required = *
 
