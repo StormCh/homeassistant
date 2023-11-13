@@ -3,7 +3,7 @@ blueprint:
   description: >
     # Heating Control Schedule for BT Thermostats
 
-    **Version 0.4.1**
+    **Version 0.4.2**
 
     ## How it works
 
@@ -18,6 +18,10 @@ blueprint:
     Required = *
 
     ## History
+
+    ### Version 0.4.2
+
+    add some notes and descriptions, for easy understanding
 
     ### Version 0.4.1
 
