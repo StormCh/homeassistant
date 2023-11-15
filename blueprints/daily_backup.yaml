@@ -1,5 +1,6 @@
 blueprint:
   name: Automated Daily Snapshot
+  source_url: https://github.com/StormCh/homeassistant/blob/main/blueprints/daily_backup.yaml
   description: Create a full snapshot backup at a given time every day.
   domain: automation
   input:
