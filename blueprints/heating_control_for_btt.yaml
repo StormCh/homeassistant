@@ -100,7 +100,7 @@ blueprint:
     set_bt_temp_after:
       name: Reset Temperature
       description: Reset the temperature after heating.
-      default: 17
+      default: 18
       selector:
         number:
           min: 5
