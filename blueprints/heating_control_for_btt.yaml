@@ -133,8 +133,11 @@ trigger:
     entity_id: !input bt_times_schedule
     from: "off"
     to: "on"
-  - platform: time_pattern
-    minutes: "/5" #every X minutes
+  - platform: time
+    at: "22:00:00"
+  - platform: time_pattern #this will kill timer trigger heating
+    hours: "/1"
+    #  minutes: "/5" #every X minutes
 
 condition: []
 

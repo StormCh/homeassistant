@@ -82,8 +82,10 @@ trigger:
   - platform: state
     entity_id: !input timer_helper
     to: "idle"
-  - platform: time_pattern
-    minutes: "/5" #every X minutes
+  - platform: time
+    at: "21:00:00"
+  #- platform: time_pattern # this will kill a schedule trigger heating
+  #  minutes: "/5" #every X minutes
 
 condition: []
 
