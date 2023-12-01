@@ -13,6 +13,10 @@ blueprint:
 
     ## History
 
+    ### Version 0.10
+
+    add a time trigger to force reset temperature of thermostat
+
     ### Version 0.9
 
     reset temperature to X after heating
@@ -78,6 +82,8 @@ trigger:
   - platform: state
     entity_id: !input timer_helper
     to: "idle"
+  - platform: time_pattern
+    minutes: "/5" #every X minutes
 
 condition: []
 
