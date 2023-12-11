@@ -3,7 +3,7 @@ blueprint:
   description: >
     # Heating Control Timer for BT Thermostats
     
-    **Version 0.10**
+    **Version 0.11**
 
     Heating control blueprint for BT Thermostats with Timer.
     Means, switch HVAC_Mode to *heat* and Temperature to *value* when Timer starts and reset to last saved Temperature when Timers expires.
@@ -12,6 +12,10 @@ blueprint:
     Required = *
 
     ## History
+
+    ### Version 0.11
+
+    define (set to 9pm) trigger to reset temperature
 
     ### Version 0.10
 
