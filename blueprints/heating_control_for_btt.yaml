@@ -156,7 +156,7 @@ trigger:
     to: "on"
   - platform: time
     at: "22:00:00"
-  - platform: numeric_state
+  - platform: state
     entity_id: !input sensor_control
   #- platform: time_pattern
   #  minutes: "1"
