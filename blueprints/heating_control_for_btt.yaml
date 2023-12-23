@@ -3,7 +3,7 @@ blueprint:
   description: >
     # Heating Control Schedule for BT Thermostats
 
-    **Version 0.6.1**
+    **Version 0.6.2**
 
     ## How it works
 
@@ -19,9 +19,13 @@ blueprint:
 
     ## History
 
+    ### Version 0.6.2
+
+    fix else condition
+
     ### Version 0.6.1
 
-    try to fix if condition
+    fix if condition
 
     ### Version 0.6.0
 
@@ -213,7 +217,7 @@ action:
         else:
           - service: climate.set_hvac_mode
             data:
-            hvac_mode: "off"
+              hvac_mode: "off"
             target: !input thermostat_target
           - service: better_thermostat.restore_saved_target_temperature
             data: {}
