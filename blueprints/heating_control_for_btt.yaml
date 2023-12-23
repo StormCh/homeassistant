@@ -3,7 +3,7 @@ blueprint:
   description: >
     # Heating Control Schedule for BT Thermostats
 
-    **Version 0.6.2**
+    **Version 0.6.3**
 
     ## How it works
 
@@ -18,6 +18,10 @@ blueprint:
     Required = *
 
     ## History
+
+    ### Version 0.6.3
+
+    fix trigger
 
     ### Version 0.6.2
 
@@ -164,15 +168,13 @@ trigger:
     to: "on"
   - platform: time
     at: "22:00:00"
-  - type: temperature
-    platform: device
+  - platform: numeric_state
     entity_id: !input sensor_control
-    domain: sensor
-    above: !input set_bt_temp
     for:
       hours: 0
       minutes: 1
       seconds: 0
+    above: !input set_bt_temp
 
   #- platform: time_pattern #this will kill timer trigger heating
   #  hours: "/1"
