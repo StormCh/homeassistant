@@ -238,8 +238,6 @@ action:
               temperature: !input set_bt_temp
             target: !input thermostat_target
 
-
-
     else:
       - service: better_thermostat.set_temp_target_temperature
         data:
