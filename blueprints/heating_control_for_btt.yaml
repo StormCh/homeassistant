@@ -3,7 +3,7 @@ blueprint:
   description: >
     # Heating Control Schedule for BT Thermostats
 
-    **Version 0.6.7**
+    **Version 0.6.0**
 
     ## How it works
 
@@ -18,34 +18,6 @@ blueprint:
     Required = *
 
     ## History
-
-    ### Version 0.6.7
-
-    fix error
-
-    ### Version 0.6.6
-
-    improve sensor control
-
-    ### Version 0.6.5
-
-    add a delay between reset temperature and hvac mode off
-
-    ### Version 0.6.4
-
-    add more logic to sensor temperature control
-
-    ### Version 0.6.3
-
-    fix trigger
-
-    ### Version 0.6.2
-
-    fix else condition
-
-    ### Version 0.6.1
-
-    fix if condition
 
     ### Version 0.6.0
 
@@ -186,7 +158,6 @@ trigger:
     at: "22:00:00"
   - platform: numeric_state
     entity_id: !input sensor_control
-
   #- platform: time_pattern
   #  minutes: "1"
   #- platform: time_pattern #this will kill timer trigger heating
@@ -202,7 +173,6 @@ action:
       date_from_day: "{{ (date_from | as_datetime).day }}"
       date_to_month: "{{ (date_to | as_datetime).month }}"
       date_to_day: "{{ (date_to | as_datetime).day }}"
-
   - if:
       - condition: template # is current date between date_from and date_to
         value_template: "{{ (now().year,date_from_month,date_from_day) <= ( now().year, now().month, now().day) <= (now().year+1,date_to_month,date_to_day) }}"
@@ -211,23 +181,16 @@ action:
         state: "on"
       - condition: template # and is anybody at home
         value_template: "{{ is_anybody_home == true }}"
-
     then:
       - if: # if temperature of sensor is above target temperature for 1min
         - condition: numeric_state
           entity_id: !input sensor_control
-          for:
-            hours: 0
-            minutes: 1
-            seconds: 0
           above: !input set_bt_temp
-
         then: # set thermostate to off
           - service: climate.set_hvac_mode
             data:
               hvac_mode: "off"
             target: !input thermostat_target
-
         else: # set thermostate to heat and set target temperature
           - service: climate.set_hvac_mode
             data:
@@ -237,7 +200,6 @@ action:
             data:
               temperature: !input set_bt_temp
             target: !input thermostat_target
-
     else:
       - service: better_thermostat.set_temp_target_temperature
         data:
