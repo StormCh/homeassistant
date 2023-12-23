@@ -3,7 +3,7 @@ blueprint:
   description: >
     # Heating Control Schedule for BT Thermostats
 
-    **Version 0.6.4**
+    **Version 0.6.5**
 
     ## How it works
 
@@ -18,6 +18,10 @@ blueprint:
     Required = *
 
     ## History
+
+    ### Version 0.6.5
+
+    add a delay between reset temperature and hvac mode off
 
     ### Version 0.6.4
 
@@ -224,6 +228,11 @@ action:
             data:
               temperature: !input set_bt_temp_after
             target: !input thermostat_target
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 15
+              milliseconds: 0
           - service: climate.set_hvac_mode
             data:
               hvac_mode: "off"
@@ -249,6 +258,11 @@ action:
             data:
               temperature: !input set_bt_temp_after
             target: !input thermostat_target
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 15
+              milliseconds: 0
           - service: climate.set_hvac_mode
             data:
               hvac_mode: "off"
