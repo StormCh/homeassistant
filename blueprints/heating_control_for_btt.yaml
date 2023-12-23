@@ -3,7 +3,7 @@ blueprint:
   description: >
     # Heating Control Schedule for BT Thermostats
 
-    **Version 0.5.1**
+    **Version 0.6.0**
 
     ## How it works
 
@@ -18,6 +18,10 @@ blueprint:
     Required = *
 
     ## History
+
+    ### Version 0.6.0
+
+    add a control temperature sensor to disable thermostat
 
     ### Version 0.5.1
 
@@ -95,8 +99,8 @@ blueprint:
             domain: climate
 
     set_bt_temp:
-      name: Set Temperature
-      description: Set the heating temperature.
+      name: Set Target Temperature
+      description: Set the heating target temperature.
       default: 20
       selector:
         number:
@@ -104,6 +108,18 @@ blueprint:
           max: 30
           step: 0.5
           unit_of_measurement: °C
+
+    sensor_control:
+      name: Sensor Control
+      description: If temperature of sensor is higher than target temperatur, then disable thermostat.
+      selector:
+        entity:
+          filter:
+            - domain:
+                - sensor
+              device_class:
+                - temperature
+          multiple: false
 
     set_bt_temp_after:
       name: Reset Temperature
@@ -127,6 +143,7 @@ variables:
   thermostat_target: !input thermostat_target
   set_bt_temp: !input set_bt_temp
   set_bt_temp_after: !input set_bt_temp_after
+  sensor_control: !input sensor_control
 
 trigger:
   - platform: state
@@ -139,6 +156,16 @@ trigger:
     to: "on"
   - platform: time
     at: "22:00:00"
+  - type: temperature
+    platform: device
+    entity_id: !input sensor_control
+    domain: sensor
+    above: !input set_bt_temp
+    for:
+      hours: 0
+      minutes: 1
+      seconds: 0
+
   #- platform: time_pattern #this will kill timer trigger heating
   #  hours: "/1"
   #  # minutes: "/5" #every X minutes
@@ -153,12 +180,12 @@ action:
       date_to_month: "{{ (date_to | as_datetime).month }}"
       date_to_day: "{{ (date_to | as_datetime).day }}"
   - if:
-      - condition: template
+      - condition: template # is current date between date_from and date_to
         value_template: "{{ (now().year,date_from_month,date_from_day) <= ( now().year, now().month, now().day) <= (now().year+1,date_to_month,date_to_day) }}"
-      - condition: state
+      - condition: state # selected schedule turns to on
         entity_id: !input bt_times_schedule
         state: "on"
-      - condition: template
+      - condition: template # is anybody at home
         value_template: "{{ is_anybody_home == true }}"
     then:
       - service: climate.set_hvac_mode
@@ -170,14 +197,23 @@ action:
           temperature: !input set_bt_temp
         target: !input thermostat_target
     else:
-      #- service: climate.set_hvac_mode
-      #  data:
-      #   hvac_mode: "off"
-      #  target: !input thermostat_target
-      #- service: better_thermostat.restore_saved_target_temperature
-      #  data: {}
-      #  target: !input thermostat_target
-      - service: better_thermostat.set_temp_target_temperature
-        data:
-          temperature: !input set_bt_temp_after
-        target: !input thermostat_target
+      - if:
+        - condition: # if sensor temperature is below target temperature
+          - type: is_temperature
+            condition: device
+            entity_id: !input sensor_control
+            domain: sensor
+            below: !input set_bt_temp
+        then:
+          - service: better_thermostat.set_temp_target_temperature
+            data:
+              temperature: !input set_bt_temp_after
+            target: !input thermostat_target
+        else:
+          - service: climate.set_hvac_mode
+            data:
+            hvac_mode: "off"
+            target: !input thermostat_target
+          - service: better_thermostat.restore_saved_target_temperature
+            data: {}
+            target: !input thermostat_target
