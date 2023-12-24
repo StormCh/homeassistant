@@ -201,6 +201,10 @@ action:
               temperature: !input set_bt_temp
             target: !input thermostat_target
     else:
+      - service: climate.set_hvac_mode
+        data:
+          hvac_mode: heat
+        target: !input thermostat_target
       - service: better_thermostat.set_temp_target_temperature
         data:
           temperature: !input set_bt_temp_after
