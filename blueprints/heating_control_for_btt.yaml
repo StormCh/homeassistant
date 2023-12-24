@@ -21,7 +21,7 @@ blueprint:
 
     ### Version 0.6.0
 
-    add a control temperature sensor to disable thermostat
+    add a control temperature sensor to disable thermostat if temp is higher than target temp. Reset after schedule.
 
     ### Version 0.5.1
 
