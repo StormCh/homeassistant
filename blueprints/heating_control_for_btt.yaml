@@ -3,7 +3,7 @@ blueprint:
   description: >
     # Heating Control Schedule for BT Thermostats
 
-    **Version 0.6.0**
+    **Version 0.7.0**
 
     ## How it works
 
@@ -234,4 +234,4 @@ action:
           #  data: {}
           #  target: !input thermostat_target
         else:
-          
+
