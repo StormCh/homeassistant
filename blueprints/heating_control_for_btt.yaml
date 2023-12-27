@@ -19,6 +19,10 @@ blueprint:
 
     ## History
 
+    ### Version 0.7.0
+
+    add ignore on boost, to enable boost (timer) function
+
     ### Version 0.6.0
 
     add a control temperature sensor to disable thermostat if temp is higher than target temp. Reset after schedule.
@@ -132,6 +136,13 @@ blueprint:
           step: 0.5
           unit_of_measurement: °C
 
+    timer_helper:
+      name: Timer *
+      description: Associated Boost Timer.
+      selector:
+        entity:
+          domain: timer
+
 mode: queued
 max_exceeded: silent
 
@@ -144,6 +155,7 @@ variables:
   set_bt_temp: !input set_bt_temp
   set_bt_temp_after: !input set_bt_temp_after
   sensor_control: !input sensor_control
+  timer_helper: !input timer_helper
 
 trigger:
   - platform: state
@@ -181,6 +193,10 @@ action:
         state: "on"
       - condition: template # and is anybody at home
         value_template: "{{ is_anybody_home == true }}"
+      - condition: state
+        entity_id: !input timer_helper
+        state: idle
+
     then:
       - if: # if temperature of sensor is above target temperature for 1min
         - condition: numeric_state
@@ -201,14 +217,21 @@ action:
               temperature: !input set_bt_temp
             target: !input thermostat_target
     else:
-      - service: climate.set_hvac_mode
-        data:
-          hvac_mode: heat
-        target: !input thermostat_target
-      - service: better_thermostat.set_temp_target_temperature
-        data:
-          temperature: !input set_bt_temp_after
-        target: !input thermostat_target
-      # - service: better_thermostat.restore_saved_target_temperature
-      #  data: {}
-      #  target: !input thermostat_target
+      - if:
+        - condition: state
+          entity_id: !input timer_helper
+          state: idle
+        then:
+          - service: climate.set_hvac_mode
+            data:
+              hvac_mode: heat
+            target: !input thermostat_target
+          - service: better_thermostat.set_temp_target_temperature
+            data:
+              temperature: !input set_bt_temp_after
+            target: !input thermostat_target
+          # - service: better_thermostat.restore_saved_target_temperature
+          #  data: {}
+          #  target: !input thermostat_target
+        else:
+          
