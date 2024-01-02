@@ -204,7 +204,7 @@ action:
       - if: # if temperature of sensor is above target temperature
         - condition: numeric_state
           entity_id: !input sensor_control
-          above: set_temperature #!input set_bt_temp #
+          above: !input set_bt_temp #set_temperature #
         then: # set thermostate to off
           - service: climate.set_hvac_mode
             data:
@@ -228,7 +228,7 @@ action:
           - if: # if temperature of sensor is above target temperature
             - condition: numeric_state
               entity_id: !input sensor_control
-              above: set_temperature #!input set_bt_temp #
+              above: !input set_bt_temp #set_temperature #
             then:
               - service: climate.set_hvac_mode
                 data:
