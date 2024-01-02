@@ -124,7 +124,7 @@ blueprint:
 
     sensor_control:
       name: Sensor Control *
-      description: If temperature of sensor is higher than target temperatur, then disable thermostat.
+      description: (Required) If temperature of sensor is higher than target temperatur, then disable thermostat.
       selector:
         entity:
           filter:
@@ -147,7 +147,7 @@ blueprint:
 
     timer_helper:
       name: Timer *
-      description: Associated Boost Timer.
+      description: (Required) Associated Boost Timer.
       selector:
         entity:
           domain: timer
@@ -202,9 +202,11 @@ action:
         state: idle
     then:
       - if: # if temperature of sensor is above target temperature
-        - condition: numeric_state
-          entity_id: !input sensor_control
-          above: !input set_bt_temp #set_temperature #
+        # - condition: numeric_state
+        #  entity_id: !input sensor_control
+        #  above: !input set_bt_temp #set_temperature #
+        - condition: template
+          value_template: "{{ state_attr( thermostat_target[0] , 'temperature' ) | float(0) > states( sensor_control ) }}" #current thermostat temp is above sensor temp
         then: # set thermostate to off
           - service: climate.set_hvac_mode
             data:
