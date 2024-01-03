@@ -193,6 +193,11 @@ action:
               temperature: !input set_boost_bt_temp
             target: !input thermostat_target
         else: # timer boost not active
+          - service: better_thermostat.set_temp_target_temperature # reset temperature
+            data:
+              temperature: !input set_bt_temp_after
+            target: !input thermostat_target
+
           - if: # if temperature of sensor is above target temperature
             #- condition: numeric_state
             #  entity_id: !input sensor_control
