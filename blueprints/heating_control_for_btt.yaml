@@ -16,7 +16,7 @@ blueprint:
 
     date_to:
       name: Month to *
-      description: (Required) Select date to end heating period. For example Y. March, using March as Enddate.
+      description: (Required) Select date to end heating period. For example Y. March, using April as Enddate.
       selector:
         date:
 
