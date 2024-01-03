@@ -181,7 +181,7 @@ action:
             #  entity_id: !input sensor_control
             #  above: !input set_bt_temp #set_temperature #
             - condition: template
-              value_template: "{{ states( sensor_control ) | float(0) > state_attr( thermostat_target[0].entity_id | default , 'temperature' ) | float(0) }}" #sensor temp is above current thermostat temp
+              value_template: "{{ states( var_sensor_control ) | float(0) > state_attr( thermostat_target[0].entity_id | default , 'temperature' ) | float(0) }}" #sensor temp is above current thermostat temp
             then:
               - service: climate.set_hvac_mode
                 data:
