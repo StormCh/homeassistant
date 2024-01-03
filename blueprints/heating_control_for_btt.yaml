@@ -126,7 +126,7 @@ action:
         {% if state_attr( var_thermostat_target.entity_id[0] | default , 'temperature') != 0 %}
           {{ state_attr( var_thermostat_target.entity_id[0] | default , 'temperature' ) | float(0) }}
         {% else %}
-          {{ state_attr( var_thermostat_target.entity_id | default , 'temperature' ) | float(0) }}
+          {{ state_attr( var_thermostat_target | default , 'temperature' ) | float(0) }}
         {% endif %}
        
   - if:
