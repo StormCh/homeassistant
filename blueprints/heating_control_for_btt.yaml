@@ -105,15 +105,15 @@ mode: queued
 max_exceeded: silent
 
 variables:
-  date_from: !input date_from
-  date_to: !input date_to
-  bt_times_schedule: !input bt_times_schedule
-  input_persons: !input input_persons
-  thermostat_target: !input thermostat_target
-  set_bt_temp: !input set_bt_temp
-  set_bt_temp_after: !input set_bt_temp_after
-  sensor_control: !input sensor_control
-  timer_helper: !input timer_helper
+  var_date_from: !input date_from
+  var_date_to: !input date_to
+  var_bt_times_schedule: !input bt_times_schedule
+  var_input_persons: !input input_persons
+  var_thermostat_target: !input thermostat_target
+  var_set_bt_temp: !input set_bt_temp
+  var_set_bt_temp_after: !input set_bt_temp_after
+  var_sensor_control: !input sensor_control
+  var_timer_helper: !input timer_helper
 
 trigger:
   - platform: state
@@ -131,21 +131,21 @@ condition: []
 
 action:
   - variables:
-      is_anybody_home: "{{ expand( input_persons ) | selectattr('state', 'eq', 'home') | list | count > 0 }}"
-      date_from_month: "{{ (date_from | as_datetime).month }}"
-      date_from_day: "{{ (date_from | as_datetime).day }}"
-      date_to_month: "{{ (date_to | as_datetime).month }}"
-      date_to_day: "{{ (date_to | as_datetime).day }}"
-      # set_temperature: "{{ state_attr( thermostat_target[0] , 'temperature' ) | float(0) }}"
+      var_is_anybody_home: "{{ expand( var_input_persons ) | selectattr('state', 'eq', 'home') | list | count > 0 }}"
+      var_date_from_month: "{{ ( var_date_from | as_datetime ).month }}"
+      var_date_from_day: "{{ ( var_date_from | as_datetime ).day }}"
+      var_date_to_month: "{{ ( var_date_to | as_datetime ).month }}"
+      var_date_to_day: "{{ ( var_date_to | as_datetime ).day }}"
+      var_set_temperature: "{{ state_attr( var_thermostat_target[0].entity_id | default , 'temperature' ) | float(0) }}"
   - if:
       - condition: template # is current date between date_from and date_to
         #value_template: "{{ (now().year,date_from_month,date_from_day) <= ( now().year, now().month, now().day) <= (now().year+1,date_to_month,date_to_day) }}"
-        value_template: "{{ now().month >= date_from_month or now().month <= date_to_month }}"
+        value_template: "{{ now().month >= var_date_from_month or now().month <= var_date_to_month }}"
       - condition: state # and selected schedule turns to on
         entity_id: !input bt_times_schedule
         state: "on"
       - condition: template # and is anybody at home
-        value_template: "{{ is_anybody_home == true }}"
+        value_template: "{{ var_is_anybody_home == true }}"
       - condition: state # boost timer is not active
         entity_id: !input timer_helper
         state: idle
@@ -153,9 +153,9 @@ action:
       - if: # if temperature of sensor is above target temperature
         #- condition: numeric_state
         #  entity_id: !input sensor_control
-        #  above: !input set_bt_temp #set_temperature #
+        #  above: !input set_bt_temp #var_set_temperature #
         - condition: template
-          value_template: "{{ states( sensor_control ) | float(0) > state_attr( thermostat_target[0].entity_id | default , 'temperature' ) | float(0) }}" #sensor temp is above current thermostat temp
+          value_template: "{{ states( var_sensor_control ) | float(0) > state_attr( var_thermostat_target[0].entity_id | default , 'temperature' ) | float(0) }}" #sensor temp is above current thermostat temp
         then: # set thermostate to off
           - service: climate.set_hvac_mode
             data:
