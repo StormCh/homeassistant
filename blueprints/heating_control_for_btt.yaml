@@ -54,8 +54,8 @@ blueprint:
       description: (Required) Choose the thermostats to be used for heating.
       selector:
         target:
-          device:
-            integration: better_thermostat
+          #device:
+          #  integration: better_thermostat
           entity:
             integration: better_thermostat
             domain: climate
