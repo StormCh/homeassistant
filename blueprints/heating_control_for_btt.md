@@ -12,6 +12,10 @@ Heating control blueprint for BT Thermostats if Schedule event is active. Schedu
 
 ## History
 
+### Version 0.9.0
+
+integrate boost timer into this blueprint
+
 ### Version 0.8.0
 
 change from target temp to set temp on control temperature to disable/enable thermostat
