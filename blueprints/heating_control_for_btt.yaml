@@ -123,10 +123,10 @@ action:
       var_date_to_month: "{{ ( var_date_to | as_datetime ).month }}"
       var_date_to_day: "{{ ( var_date_to | as_datetime ).day }}"
       var_set_temperature: >-
-        {% if is_state( var_thermostat_target.entity_id[0] | default , 'temperature') == 0 %}
-          {{ state_attr( var_thermostat_target.entity_id | default , 'temperature' ) | float(0) }}
-        {% else %}
+        {% if state_attr( var_thermostat_target.entity_id[0] | default , 'temperature') != 0 %}
           {{ state_attr( var_thermostat_target.entity_id[0] | default , 'temperature' ) | float(0) }}
+        {% else %}
+          {{ state_attr( var_thermostat_target.entity_id | default , 'temperature' ) | float(0) }}
         {% endif %}
        
   - if:
