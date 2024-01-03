@@ -180,10 +180,19 @@ action:
             target: !input thermostat_target
     else:
       - if:
-        - condition: state  # boost timer is not active
+        - condition: state  # boost timer is active
           entity_id: !input timer_helper
-          state: idle
+          state: active
         then:
+          - service: climate.set_hvac_mode
+            data:
+              hvac_mode: heat
+            target: !input thermostat_target
+          - service: better_thermostat.set_temp_target_temperature
+            data:
+              temperature: !input set_boost_bt_temp
+            target: !input thermostat_target
+        else: # timer boost not active
           - if: # if temperature of sensor is above target temperature
             #- condition: numeric_state
             #  entity_id: !input sensor_control
@@ -204,13 +213,4 @@ action:
                 data:
                   temperature: !input set_bt_temp_after
                 target: !input thermostat_target
-        else: # timer boost active ?
-          - service: climate.set_hvac_mode
-            data:
-              hvac_mode: heat
-            target: !input thermostat_target
-          - service: better_thermostat.set_temp_target_temperature
-            data:
-              temperature: !input set_boost_bt_temp
-            target: !input thermostat_target
 
