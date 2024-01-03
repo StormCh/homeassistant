@@ -1,5 +1,15 @@
 # Heating Control Schedule for BT Thermostats
 
+## How it works
+
+Heating control blueprint for BT Thermostats if Schedule event is active. Scheduler can be added in the helpers section in your home assistant settings.
+
+## Basic function
+
+* current date must be in between *date from* and *date to*. Year is ignored.
+* runs only if someone is at home, uses *Person at home*
+* switch HVAC_Mode to *heat* and Temperature to *Set Temperature value* when schedule begins and reset to *Reset Temperatur value* when schedule ends.
+
 ## History
 
 ### Version 0.8.0
