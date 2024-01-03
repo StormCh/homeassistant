@@ -9,19 +9,19 @@ blueprint:
   source_url: https://github.com/StormCh/homeassistant/blob/main/blueprints/heating_control_for_btt.yaml
   input:
     date_from:
-      name: Month from *
+      name: Month from
       description: (Required) Select date to start heating period. For example X. October, using October as Startdate.
       selector:
         date:
 
     date_to:
-      name: Month to *
+      name: Month to
       description: (Required) Select date to end heating period. For example Y. March, using April as Enddate.
       selector:
         date:
 
     input_persons:
-      name: Person at home *
+      name: Person at home
       description: (Required) Presence, start heating only if someone (one of there persons) is at home.
       default: []
       selector:
@@ -31,15 +31,15 @@ blueprint:
           multiple: true
 
     bt_times_schedule:
-      name: Scheduler *
+      name: Scheduler
       description: (Required) Used Scheduler. Scheduler can be added in the helpers section in your home assistant settings.
       selector:
         entity:
           domain: schedule
 
     thermostat_target:
-      name: Thermostats *
-      description: (Required) Choose the thermostats to be used for heating. Choose Entity (not Device)
+      name: Thermostats
+      description: (Required) Choose the thermostats to be used for heating. Choose Entity (not Device).
       selector:
         target:
           #device:
@@ -49,7 +49,7 @@ blueprint:
             domain: climate
 
     set_bt_temp:
-      name: Set Target Temperature
+      name: Target Temperature
       description: Set the heating target temperature.
       default: 20
       selector:
@@ -60,8 +60,8 @@ blueprint:
           unit_of_measurement: °C
 
     sensor_control:
-      name: Sensor Control *
-      description: (Required) If temperature of sensor is higher than target temperatur, then disable thermostat.
+      name: Sensor Control
+      description: (Required) External temperature sensor. If temp is higher than target temperature, then disable thermostat.
       selector:
         entity:
           filter:
@@ -83,14 +83,14 @@ blueprint:
           unit_of_measurement: °C
 
     timer_helper:
-      name: Timer *
-      description: (Required) Associated Boost Timer.
+      name: Boost Timer
+      description: Required. Timer can be added in the helpers section in your home assistant settings.
       selector:
         entity:
           domain: timer
 
     set_boost_bt_temp:
-      name: Set Boost  Temperature
+      name: Set Boost Temperature
       description: Set the heating boost temperature.
       default: 30
       selector:
