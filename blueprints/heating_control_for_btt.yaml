@@ -103,6 +103,12 @@ trigger:
     to: "on"
   - platform: state
     entity_id: !input sensor_control
+  - platform: state
+    entity_id: !input timer_helper
+    to: "active"
+  - platform: state
+    entity_id: !input timer_helper
+    to: "idle"
 
 condition: []
 
