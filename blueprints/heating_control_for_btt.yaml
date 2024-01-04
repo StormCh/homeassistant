@@ -154,7 +154,8 @@ action:
       #  {% else %}
       #    {{ state_attr( var_thermostat_target.entity_id | default , 'temperature' ) | float(0) }}
       #  {% endif %}
-  - if:
+
+  - if: #trigger to idle reset to after temp
       - condition: trigger
         id: "to_idle"
     then:
@@ -166,6 +167,20 @@ action:
         data:
           temperature: !input set_bt_temp_after
         target: !input thermostat_target
+
+  - if: #trigger to active set to set temp
+      - condition: trigger
+        id: "to_active"
+    then:
+      - service: climate.set_hvac_mode
+        data:
+          hvac_mode: heat
+        target: !input thermostat_target
+      - service: better_thermostat.set_temp_target_temperature
+        data:
+          temperature: !input set_boost_bt_temp
+        target: !input thermostat_target
+
   - if:
       - condition: template # is current date between date_from and date_to
         value_template: "{{ now().month >= var_date_from_month or now().month <= var_date_to_month }}"
@@ -177,6 +192,7 @@ action:
       - condition: state # boost timer is not active
         entity_id: !input timer_helper
         state: idle
+
     then:
       - if: # if temperature of sensor is above target temperature
         - condition: numeric_state
@@ -198,21 +214,13 @@ action:
             data:
               temperature: !input set_bt_temp
             target: !input thermostat_target
+            
     else:
       - if:
-        - condition: state  # boost timer is active
+        - condition: state  # boost timer is idle
           entity_id: !input timer_helper
-          state: active
+          state: idle
         then:
-          - service: climate.set_hvac_mode
-            data:
-              hvac_mode: heat
-            target: !input thermostat_target
-          - service: better_thermostat.set_temp_target_temperature
-            data:
-              temperature: !input set_boost_bt_temp
-            target: !input thermostat_target
-        else: # timer boost not active
           - service: better_thermostat.set_temp_target_temperature # reset temperature
             data:
               temperature: !input set_bt_temp_after
@@ -238,4 +246,5 @@ action:
                 data:
                   temperature: !input set_bt_temp_after
                 target: !input thermostat_target
+        else: # timer boost active
 
