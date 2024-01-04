@@ -41,11 +41,19 @@ blueprint:
       name: Thermostats
       description: (Required) Choose the thermostats to be used for heating. Choose Entity (not Device).
       selector:
-        entity:
-          filter:
-            - domain:
-                - climate
-          multiple: true
+        target:
+          #device:
+          #  integration: better_thermostat
+          entity:
+            integration: better_thermostat
+            domain: climate
+      #selector:
+      #  entity:
+      #    filter:
+      #      - domain:
+      #          - climate
+      #    multiple: true
+      
 
     set_bt_temp:
       name: Target Temperature
@@ -138,12 +146,13 @@ action:
       var_date_from_day: "{{ ( var_date_from | as_datetime ).day }}"
       var_date_to_month: "{{ ( var_date_to | as_datetime ).month }}"
       var_date_to_day: "{{ ( var_date_to | as_datetime ).day }}"
-      var_set_temperature: >-
-        {% if state_attr( var_thermostat_target.entity_id[0] | default , 'temperature') != 0 %}
-          {{ state_attr( var_thermostat_target.entity_id[0] | default , 'temperature' ) | float(0) }}
-        {% else %}
-          {{ state_attr( var_thermostat_target.entity_id | default , 'temperature' ) | float(0) }}
-        {% endif %}
+      #var_set_temperature: >-
+      #  {% if state_attr( var_thermostat_target.entity_id[0] | default , 'temperature') != 0 %}
+      #    {{ state_attr( var_thermostat_target.entity_id[0] | default , 'temperature' ) | float(0) }}
+      #  {% else %}
+      #    {{ state_attr( var_thermostat_target.entity_id | default , 'temperature' ) | float(0) }}
+      #  {% endif %}
+      #var_set_temperature: 17.5
        
   - if:
       - condition: template # is current date between date_from and date_to
@@ -158,11 +167,11 @@ action:
         state: idle
     then:
       - if: # if temperature of sensor is above target temperature
-        #- condition: numeric_state
-        #  entity_id: !input sensor_control
-        #  above: !input set_bt_temp #var_set_temperature #
-        - condition: template
-          value_template: "{{ states( var_sensor_control ) | float(0) > var_set_temperature }}" #sensor temp is above current thermostat temp
+        - condition: numeric_state
+          entity_id: !input sensor_control
+          above: !input set_bt_temp #var_set_temperature #
+        #- condition: template
+        #  value_template: "{{ states( var_sensor_control ) | float(0) > var_set_temperature }}" #sensor temp is above current thermostat temp
         then: # set thermostate to off
           - service: climate.set_hvac_mode
             data:
@@ -198,11 +207,11 @@ action:
             target: !input thermostat_target
 
           - if: # if temperature of sensor is above target temperature
-            #- condition: numeric_state
-            #  entity_id: !input sensor_control
-            #  above: !input set_bt_temp #set_temperature #
-            - condition: template
-              value_template: "{{ states( var_sensor_control ) | float(0) > var_set_temperature }}" #sensor temp is above current thermostat temp
+            - condition: numeric_state
+              entity_id: !input sensor_control
+              above: !input set_bt_temp #set_temperature #
+            #- condition: template
+            #  value_template: "{{ states( var_sensor_control ) | float(0) > var_set_temperature }}" #sensor temp is above current thermostat temp
             then:
               - service: climate.set_hvac_mode
                 data:
