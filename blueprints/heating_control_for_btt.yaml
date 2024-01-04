@@ -124,9 +124,11 @@ trigger:
   - platform: state
     entity_id: !input timer_helper
     to: "active"
+    id: "to_active"
   - platform: state
     entity_id: !input timer_helper
     to: "idle"
+    id: "to_idle"
 
 condition: []
 
@@ -152,8 +154,18 @@ action:
       #  {% else %}
       #    {{ state_attr( var_thermostat_target.entity_id | default , 'temperature' ) | float(0) }}
       #  {% endif %}
-      #var_set_temperature: 17.5
-       
+  - if:
+      - condition: trigger
+        id: "to_idle"
+    then:
+      - service: climate.set_hvac_mode
+        data:
+          hvac_mode: heat
+        target: !input thermostat_target
+      - service: better_thermostat.set_temp_target_temperature
+        data:
+          temperature: !input set_bt_temp_after
+        target: !input thermostat_target
   - if:
       - condition: template # is current date between date_from and date_to
         value_template: "{{ now().month >= var_date_from_month or now().month <= var_date_to_month }}"
