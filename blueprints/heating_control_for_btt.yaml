@@ -122,6 +122,8 @@ trigger:
   - platform: state
     entity_id: !input sensor_control
   - platform: state
+    entity_id: !input input_persons
+  - platform: state
     entity_id: !input timer_helper
     to: "active"
     id: "to_active"
@@ -214,7 +216,7 @@ action:
             data:
               temperature: !input set_bt_temp
             target: !input thermostat_target
-            
+
     else:
       - if:
         - condition: state  # boost timer is idle
