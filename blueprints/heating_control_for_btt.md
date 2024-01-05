@@ -16,6 +16,7 @@ Heating blueprint for BT Thermostats with Schedule or Timer Event. Scheduler/Tim
 ### Version 0.9.0
 
 integrate boost timer into this blueprint
+add trigger for persons
 
 ### Version 0.8.0
 
