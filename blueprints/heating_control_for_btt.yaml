@@ -3,7 +3,7 @@ blueprint:
   description: >
     # Heating Control for BT Thermostats
 
-    **Version 0.9.0**
+    **Version 0.10.0**
 
   domain: automation
   source_url: https://github.com/StormCh/homeassistant/blob/main/blueprints/heating_control_for_btt.yaml
@@ -150,12 +150,12 @@ action:
       var_date_from_day: "{{ ( var_date_from | as_datetime ).day }}"
       var_date_to_month: "{{ ( var_date_to | as_datetime ).month }}"
       var_date_to_day: "{{ ( var_date_to | as_datetime ).day }}"
-      #var_set_temperature: >-
-      #  {% if state_attr( var_thermostat_target.entity_id[0] | default , 'temperature') != 0 %}
-      #    {{ state_attr( var_thermostat_target.entity_id[0] | default , 'temperature' ) | float(0) }}
-      #  {% else %}
-      #    {{ state_attr( var_thermostat_target.entity_id | default , 'temperature' ) | float(0) }}
-      #  {% endif %}
+      var_set_temperature: >-
+        {% if var_thermostat_target[entity_id].lower is defined %}
+          {{ state_attr( var_thermostat_target[entity_id] | default , 'temperature' ) | float(0) }}
+        {% else %}
+          {{ state_attr( var_thermostat_target[entity_id][0] | default , 'temperature' ) | float(0) }}
+        {% endif %}
 
   - if: #trigger to idle reset to after temp
       - condition: trigger
