@@ -156,7 +156,6 @@ action:
         {% else %}
           {{ state_attr( var_thermostat_target[entity_id][0] | default , 'temperature' ) | float(0) }}
         {% endif %}
-        {% endif %}
 
   - if: #trigger to idle reset to after temp
       - condition: trigger
