@@ -3,7 +3,7 @@ blueprint:
   description: >
     # Heating Control for BT Thermostats
 
-    **Version 0.10.0 beta**
+    **Version 0.10.1 beta**
 
   domain: automation
   source_url: https://github.com/StormCh/homeassistant/blob/main/blueprints/heating_control_for_btt_beta.yaml
@@ -231,7 +231,7 @@ action:
           - if: # if temperature of sensor is above target temperature
             - condition: numeric_state
               entity_id: !input sensor_control
-              above: !input set_bt_temp #set_temperature #
+              above: !input set_bt_temp_after #set_temperature #
             #- condition: template
             #  value_template: "{{ states( var_sensor_control ) | float(0) > var_set_temperature }}" #sensor temp is above current thermostat temp
             then:

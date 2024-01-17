@@ -13,6 +13,10 @@ Heating blueprint for BT Thermostats with Schedule or Timer Event. Scheduler/Tim
 
 ## History
 
+### Version 0.10.1
+
+turn off thermostat if temperature is over temp_after
+
 ### Version 0.10.0
 
 readd check on sensor temprature to switch off thermostat if overheating
