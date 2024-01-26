@@ -3,7 +3,7 @@ blueprint:
   description: >
     # Heating Control for BT Thermostats
 
-    **Version 0.10.1**
+    **Version 0.10.2**
 
   domain: automation
   source_url: https://github.com/StormCh/homeassistant/blob/main/blueprints/heating_control_for_btt.yaml
@@ -203,6 +203,15 @@ action:
         #- condition: template
         #  value_template: "{{ states( var_sensor_control ) | float(0) > var_set_temperature }}" #sensor temp is above current thermostat temp
         then: # set thermostate to off
+          - service: better_thermostat.set_temp_target_temperature
+            data:
+              temperature: !input set_bt_temp_after
+            target: !input thermostat_target
+          - delay:
+              hours: 0
+              minutes: 1
+              seconds: 0
+              milliseconds: 0
           - service: climate.set_hvac_mode
             data:
               hvac_mode: "off"
@@ -235,6 +244,15 @@ action:
             #- condition: template
             #  value_template: "{{ states( var_sensor_control ) | float(0) > var_set_temperature }}" #sensor temp is above current thermostat temp
             then:
+              - service: better_thermostat.set_temp_target_temperature
+                data:
+                  temperature: !input set_bt_temp_after
+                target: !input thermostat_target
+              - delay:
+                  hours: 0
+                  minutes: 1
+                  seconds: 0
+                  milliseconds: 0
               - service: climate.set_hvac_mode
                 data:
                   hvac_mode: "off"
