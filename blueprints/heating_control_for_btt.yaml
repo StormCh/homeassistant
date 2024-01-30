@@ -3,7 +3,7 @@ blueprint:
   description: >
     # Heating Control for BT Thermostats
 
-    **Version 0.10.2**
+    **Version 0.10.3**
 
   domain: automation
   source_url: https://github.com/StormCh/homeassistant/blob/main/blueprints/heating_control_for_btt.yaml
@@ -205,17 +205,17 @@ action:
         then: # set thermostate to off
           - service: better_thermostat.set_temp_target_temperature
             data:
-              temperature: !input set_bt_temp_after
+              temperature: 5.0 #!input set_bt_temp_after
             target: !input thermostat_target
-          - delay:
-              hours: 0
-              minutes: 1
-              seconds: 0
-              milliseconds: 0
-          - service: climate.set_hvac_mode
-            data:
-              hvac_mode: "off"
-            target: !input thermostat_target
+          #- delay:
+          #    hours: 0
+          #    minutes: 1
+          #    seconds: 0
+          #    milliseconds: 0
+          #- service: climate.set_hvac_mode
+          #  data:
+          #    hvac_mode: "off"
+          #  target: !input thermostat_target
         else: # set thermostate to heat and set target temperature
           - service: climate.set_hvac_mode
             data:
@@ -246,17 +246,17 @@ action:
             then:
               - service: better_thermostat.set_temp_target_temperature
                 data:
-                  temperature: !input set_bt_temp_after
+                  temperature: 5.0 #!input set_bt_temp_after
                 target: !input thermostat_target
-              - delay:
-                  hours: 0
-                  minutes: 1
-                  seconds: 0
-                  milliseconds: 0
-              - service: climate.set_hvac_mode
-                data:
-                  hvac_mode: "off"
-                target: !input thermostat_target
+              #- delay:
+              #    hours: 0
+              #    minutes: 1
+              #    seconds: 0
+              #    milliseconds: 0
+              #- service: climate.set_hvac_mode
+              #  data:
+              #    hvac_mode: "off"
+              #  target: !input thermostat_target
             else:
               - service: climate.set_hvac_mode
                 data:
