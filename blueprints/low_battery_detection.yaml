@@ -1,15 +1,17 @@
 blueprint:
-  name: Low battery level detection & notification for all battery sensors
-  description: Regularly test all sensors with 'battery' device-class for crossing a certain battery level threshold and if so execute an action.
   domain: automation
+  name: Low battery detection & notification for all battery sensors
+  description: >-
+    Regularly test all sensors with 'battery' device-class for crossing
+    a certain battery level threshold and if so execute an action.
+
+    ***Blueprint Revision:*** *7 / 2023-01-04*
   source_url: https://github.com/StormCh/homeassistant/blob/main/blueprints/low_battery_detection.yaml
-
-
-  # Blueprint Inputs
   input:
     threshold:
       name: Battery warning level threshold
-      description: Battery sensors below threshold are assumed to be low-battery (as well as binary battery sensors with value 'on').
+      description: Battery sensors below threshold are assumed to be low-battery (as
+        well as binary battery sensors with value 'on').
       default: 20
       selector:
         number:
@@ -18,145 +20,141 @@ blueprint:
           unit_of_measurement: '%'
           mode: slider
           step: 5.0
-
     time:
-      name: Time to test on
-      description: Test is run at configured time
-      default: '10:00:00'
+      name: Time to run detection on
+      description: 'Detection is run at configured time'
+      default: '18:00:00'
       selector:
         time: {}
-    # In this segment the user will selected the week days that te automation will be exectuted.
-    monday_enabled:
-      name: 'Monday'
-      description: 'Run test on Monday'
-      default: True
+    weekday:
+      name: Weekday(s) to run detection on
+      description: 'Detection is run at configured time on the selected weekday(s)'
+      default:
+        - mon
+        - tue
+        - wed
+        - thu
+        - fri
+        - sat
+        - sun
       selector:
-        boolean:
-    tuesday_enabled:
-      name: Tuesday
-      description: 'Run test on Tuesday'
-      default: True
-      selector:
-        boolean:
-    wednesday_enabled:
-      name: Wednesday
-      description: 'Run test on Wednesday'
-      default: True
-      selector:
-        boolean:
-    thursday_enabled:
-      name: Thursday
-      description: 'Run test on Thursday'
-      default: True
-      selector:
-        boolean:
-    friday_enabled:
-      name: Friday
-      description: 'Run test on Friday'
-      default: True
-      selector:
-        boolean:
-    saturday_enabled:
-      name: Saturday
-      description: 'Run test on Saturday'
-      default: True
-      selector:
-        boolean:
-    sunday_enabled:
-      name: Sunday
-      description: 'Run test on Sunday'
-      default: True
-      selector:
-        boolean:
-
+        select:
+          custom_value: false
+          mode: dropdown
+          multiple: true
+          options:
+            - label: Monday
+              value: mon
+            - label: Tuesday
+              value: tue
+            - label: Wednesday
+              value: wed
+            - label: Thursday
+              value: thu
+            - label: Friday
+              value: fri
+            - label: Saturday
+              value: sat
+            - label: Sunday
+              value: sun
     exclude:
-      name: Excluded Sensors
-      description: Battery sensors (e.g. smartphone) to exclude from detection. Only entities are supported, areas and devices must be expanded!
-      default: {}
+      name: Excluded sensors (optional)
+      description: Battery sensors (e.g. smartphone) to exclude from detection.
+      default: []
       selector:
-        target:
-          entity:
-            device_class: battery
+        entity:
+          device_class: battery
+          multiple: true
+    bullet:
+      name: Bullet point icon
+      description: 'Bullet point icon to list detected battery sensors'
+      default: '⦿'
+      selector:
+        text:
+    message:
+      name: Detection message
+      description: | 
+        Detection message shown for a detected low battery sensor.
+        The message can be freely formatted and supports the following placeholders:
 
+        [% bullet %] - is replaced with the choosen bullet point icon
+        [% sensor %] - is replaced with the name of the sensor
+        [% state %]  - is replaced with the battery state in percent ('0' for binary sensors)
+        [% area %]   - is replaced by the area (Unknown if sensor has no area)
+      default: '[% bullet %] [% sensor %] ([% state %]%) in area [% area %]'
+      selector:
+        text:
+    order:
+      name: Sorting of messages
+      description: |
+        Sorting of messages is posible by the following criteria:
+
+        Alphabetical   - sort alphabetical by battery sensor name
+        Battery charge - sort by battery charge
+        Area           - sort by area
+      default: 'name'
+      selector:
+        select:
+          custom_value: false
+          mode: dropdown
+          multiple: false
+          options:
+          - label: Alphabetical
+            value: name
+          - label: Battery charge
+            value: state
+          - label: Area
+            value: area
     actions:
       name: Actions
-      description: Notifications or similar to be run. {{sensors}} is replaced with the names of sensors being low on battery.
+      description: Notifications or similar to be run. {{sensors}} is replaced with
+        the names of sensors being low on battery and {{threshold}} is replaced with the threshold warning value.
       selector:
-        action:
-
-
+        action: {}
 variables:
-  monday_enabled: !input 'monday_enabled'
-  tuesday_enabled: !input 'tuesday_enabled'
-  wednesday_enabled: !input 'wednesday_enabled'
-  thursday_enabled: !input 'thursday_enabled'
-  friday_enabled: !input 'friday_enabled'
-  saturday_enabled: !input 'saturday_enabled'
-  sunday_enabled: !input 'sunday_enabled'
-
-  current_day: '{{ now().weekday() | int }}'
-
-  threshold: !input 'threshold'
-
-  exclude: !input 'exclude'
-
-  sensors: >-
-    {% set result = namespace(sensors=[]) %}
-    {% for state in states.sensor | selectattr('attributes.device_class', '==', 'battery') %}
-      {% if exclude.entity_id is defined %}
-        {% if 0 <= state.state | int(-1) < threshold | int and not state.entity_id in exclude.entity_id %}
-          {% set result.sensors = result.sensors + [state.name ~ ' (' ~ state.state ~ ' %)'] %}
-        {% endif %}
-      {% else %}
-        {% if 0 <= state.state | int(-1) < threshold | int %}
-          {% set result.sensors = result.sensors + [state.name ~ ' (' ~ state.state ~ ' %)'] %}
-        {% endif %}
-      {% endif %}
-    {% endfor %}
-    {% for state in states.binary_sensor | selectattr('attributes.device_class', '==', 'battery') | selectattr('state', '==', 'on') %}
-      {% if exclude.entity_id is defined %}
-        {% if not state.entity_id in exclude.entity_id %}
-          {% set result.sensors = result.sensors + [state.name] %}
-        {% endif %}
-      {% else %}
-        {% set result.sensors = result.sensors + [state.name] %}
-      {% endif %}
-    {% endfor %}
-    {{result.sensors|join(', ')}}
-
-
-# Triggers
+  weekday: !input weekday
+  threshold: !input threshold
+  exclude: !input exclude
+  bullet: !input bullet
+  message: !input message
+  order: !input order
+  sensors: "{% set result = namespace(sensors=[]) %}
+            {% for sensor in states.sensor
+                | rejectattr('entity_id', 'in', exclude)
+                | rejectattr('attributes.device_class', 'undefined')
+                | selectattr('attributes.device_class', '==', 'battery') %}  
+                {% if 0 <= sensor.state | int(-1) < threshold | int %}
+                    {% set area_name = area_name(sensor.entity_id) %} {% if area_name == None %} {% set area_name = 'Unknown' %} {% endif %}
+                    {% set result.sensors = result.sensors + [dict(name = sensor.name, state = sensor.state | int, area = area_name)]  %}
+                {% endif %}
+            {% endfor %} 
+            {% for sensor in states.binary_sensor
+                | rejectattr('entity_id', 'in', exclude)
+                | rejectattr('attributes.device_class', 'undefined')          
+                | selectattr('attributes.device_class', '==', 'battery')
+                | selectattr('state', '==', 'on') %}
+                {% set area_name = area_name(sensor.entity_id) %} {% if area_name == None %} {% set area_name = 'Unknown' %} {% endif %}
+                {% set result.sensors = result.sensors + [dict(name = sensor.name, state = 0 | int, area = area_name)] %}
+            {% endfor %}
+            {% set sensors = result.sensors | sort(attribute=order) %}
+            {% set ns = namespace(sensors ='') %}
+            {% for sensor in sensors  %}
+                {% set ns.sensors  = ns.sensors + (message
+                     | replace('[% bullet %]', bullet)
+                     | replace('[% sensor %]', sensor.name)
+                     | replace('[% state %]', sensor.state)
+                     | replace('[% area %]', sensor.area) ~ '\n') %}
+            {% endfor %}
+            {{ns.sensors}}"
 trigger:
-  - platform: time
-    at: !input 'time'
-
-
-# Conditions used to determine if the automation should run for the specific trigger event
+- platform: time
+  at: !input time
 condition:
-# Check if the automation is supposed to be executed during that specific weekday
-  - condition: template
-    value_template: >-
-        {{ 
-          (current_day == 0 and monday_enabled) or 
-          (current_day == 1 and tuesday_enabled) or 
-          (current_day == 2 and wednesday_enabled) or
-          (current_day == 3 and thursday_enabled) or 
-          (current_day == 4 and friday_enabled) or
-          (current_day == 5 and saturday_enabled) or
-          (current_day == 6 and sunday_enabled)
-        }}
-
-
-  # Check if the sensors list is not empty
-  - condition: template
-    value_template: >-
-        {{ sensors != '''' }}
-
-
-# Actions
+  condition: and
+  conditions:
+    - '{{ sensors | length > 1 }}'
+    - condition: time
+      weekday: !input weekday
 action:
-  - choose: []
-    default: !input 'actions'
-  
+  !input actions
 mode: single
-max_exceeded: silent
