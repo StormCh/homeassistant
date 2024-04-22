@@ -20,13 +20,17 @@ blueprint:
       selector:
         date:
 
-    input_zone:
+    zone_entity:
       name: Zone
+      description: (Required) Zone
       default: home
       selector:
         entity:
-          domain: zone
-
+          filter:
+          - domain:
+            - zone
+          multiple: false
+        
     input_persons:
       name: Person at Zone
       description: (Required) Presence, start heating only if someone (one of there persons) is at zone.
@@ -147,13 +151,15 @@ action:
       var_date_to: !input date_to
       var_bt_times_schedule: !input bt_times_schedule
       var_input_persons: !input input_persons
-      var_input_zone: !input input_zone
+      var_zone_entity: !input zone_entity
+      var_zone_state: '{{ states[var_zone_entity].name|lower }}' # Not really "state", but lowering the name works too.
+      var_zone_name: '{{ states[var_zone_entity].name }}'
       var_thermostat_target: !input thermostat_target
       var_set_bt_temp: !input set_bt_temp
       var_set_bt_temp_after: !input set_bt_temp_after
       var_sensor_control: !input sensor_control
       var_timer_helper: !input timer_helper
-      var_is_anybody_home: "{{ expand( var_input_persons ) | selectattr('state', 'eq', var_input_zone) | list | count > 0 }}"
+      var_is_anybody_home: "{{ expand( var_input_persons ) | selectattr('state', 'eq', var_zone_name) | list | count > 0 }}"
       var_date_from_month: "{{ ( var_date_from | as_datetime ).month }}"
       var_date_from_day: "{{ ( var_date_from | as_datetime ).day }}"
       var_date_to_month: "{{ ( var_date_to | as_datetime ).month }}"
