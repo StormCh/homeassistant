@@ -13,6 +13,10 @@ Heating blueprint for BT Thermostats with Schedule or Timer Event. Scheduler/Tim
 
 ## History
 
+### Version 0.11.0
+
+* add zone to control
+
 ### Version 0.10.3
 
 * fixing not closing thermostat if sensor temp is above target temp. Set temp tp 5°
