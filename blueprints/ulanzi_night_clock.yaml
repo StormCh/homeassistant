@@ -1,5 +1,5 @@
 blueprint:
-  source_url: https://github.com/StormCh/homeassistant/edit/main/blueprints/ulanzi_night_clock.yaml
+  source_url: https://github.com/StormCh/homeassistant/blob/main/blueprints/ulanzi_night_clock.yaml
   name: "AWTRIX Night Clock"
   description: >
     ## AWTRIX Night Clock
@@ -339,3 +339,4 @@ action:
                         retain: false
                         topic: "{{ repeat.item.topic ~ '/switch'}}"
                         payload: "{{ payload_sleep_switch }}"
+

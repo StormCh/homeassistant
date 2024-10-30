@@ -2,7 +2,7 @@ blueprint:
   name: AWTRIX show entity
   description: Show entity
   domain: automation
-  source_url: https://github.com/StormCh/homeassistant/edit/main/blueprints/awtrix_show_entity.yaml
+  source_url: https://github.com/StormCh/homeassistant/blob/main/blueprints/awtrix_show_entity.yaml
   input:
     app_name:
       name: (Required) Application name

@@ -7,7 +7,7 @@ blueprint:
     It uses a icons 54156 (solar-green), 50557 (solar-white-dyn), 50546 (solar-static) that you need to install.
 
   domain: automation
-  source_url: https://github.com/StormCh/homeassistant/edit/main/blueprints/ulanzi_solarproduction.yaml
+  source_url: https://github.com/StormCh/homeassistant/blob/main/blueprints/ulanzi_solarproduction.yaml
   input:
     awtrix:
       name: AWTRIX Device
