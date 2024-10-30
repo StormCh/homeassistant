@@ -1,6 +1,6 @@
 blueprint:
-  name: AWTRIX Show Entity via Custom App
-  description: AWTRIX Show Entity via Custom App
+  name: AWTRIX show entity
+  description: Show entity
   domain: automation
   source_url: https://github.com/StormCh/homeassistant/edit/main/blueprints/awtrix_show_entity.yaml
   input:
