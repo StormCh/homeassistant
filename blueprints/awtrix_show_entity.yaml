@@ -206,4 +206,3 @@ action:
              data:
                name: "{{app_name}}"
                data: {}
-

@@ -339,5 +339,3 @@ action:
                         retain: false
                         topic: "{{ repeat.item.topic ~ '/switch'}}"
                         payload: "{{ payload_sleep_switch }}"
-
-
