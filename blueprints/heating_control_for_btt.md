@@ -13,6 +13,8 @@ Heating blueprint for BT Thermostats with Schedule or Timer Event. Scheduler/Tim
 
 ## History
 
+### Version 0.12.0
+
 * add trigger every 5 minutes
 
 ### Version 0.11.0
