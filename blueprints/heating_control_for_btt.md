@@ -13,6 +13,8 @@ Heating blueprint for BT Thermostats with Schedule or Timer Event. Scheduler/Tim
 
 ## History
 
+* try to fix checking on states zone name, which now checks against lower string
+
 ### Version 0.12.0
 
 * add trigger every 5 minutes
