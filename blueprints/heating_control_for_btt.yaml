@@ -3,7 +3,7 @@ blueprint:
   description: >
     # Heating Control for BT Thermostats
 
-    **Version 0.13.0**
+    **Version 0.14.0**
 
   domain: automation
   source_url: https://github.com/StormCh/homeassistant/blob/main/blueprints/heating_control_for_btt.yaml
@@ -156,12 +156,16 @@ action:
       var_zone_entity: !input zone_entity
       var_zone_lname: '{{ states[var_zone_entity].name|lower }}' #lowering the name works.
       var_zone_name: '{{ states[var_zone_entity].name }}'
+      var_zone_uname: '{{ states[var_zone_entity].name|upper }}' #upper the name works.
       var_thermostat_target: !input thermostat_target
       var_set_bt_temp: !input set_bt_temp
       var_set_bt_temp_after: !input set_bt_temp_after
       var_sensor_control: !input sensor_control
       var_timer_helper: !input timer_helper
-      var_is_anybody_home: "{{ expand( var_input_persons ) | selectattr('state', 'eq', var_zone_lname) | list | count > 0 }}"
+      var_is_anybody_home_l: "{{ expand( var_input_persons ) | selectattr('state', 'eq', var_zone_lname) | list | count }}" #lower case
+      var_is_anybody_home_n: "{{ expand( var_input_persons ) | selectattr('state', 'eq', var_zone_name) | list | count }}" #normal case
+      var_is_anybody_home_u: "{{ expand( var_input_persons ) | selectattr('state', 'eq', var_zone_uname) | list | count }}" #upper case
+      var_is_anybody_home: "{{ ( var_is_anybody_home_l + var_is_anybody_home_n + var_is_anybody_home_u ) > 0 }}"
       var_date_from_month: "{{ ( var_date_from | as_datetime ).month }}"
       var_date_from_day: "{{ ( var_date_from | as_datetime ).day }}"
       var_date_to_month: "{{ ( var_date_to | as_datetime ).month }}"
