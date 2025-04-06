@@ -51,6 +51,7 @@ blueprint:
             - label: December
               value: 12
           multiple: true
+          mode: dropdown
 
     zone_entity:
       name: Zone
