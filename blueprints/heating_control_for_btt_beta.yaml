@@ -50,6 +50,7 @@ blueprint:
               value: 11
             - label: December
               value: 12
+          multiple: true
 
     zone_entity:
       name: Zone
