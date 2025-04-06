@@ -3,7 +3,7 @@ blueprint:
   description: >
     # Heating Control for BT Thermostats
 
-    **Version 0.15.01**
+    **Version 0.15.1**
 
   domain: automation
   source_url: https://github.com/StormCh/homeassistant/blob/main/blueprints/heating_control_for_btt_beta.yaml
