@@ -74,19 +74,10 @@ blueprint:
       description: (Required) Choose the thermostats to be used for heating. Choose Entity (not Device).
       selector:
         target:
-          #device:
-          #  integration: better_thermostat
           entity:
             integration: better_thermostat
             domain: climate
-      #selector:
-      #  entity:
-      #    filter:
-      #      - domain:
-      #          - climate
-      #    multiple: true
-      
-
+ 
     set_bt_temp:
       name: Target Temperature
       description: Set the heating target temperature.
@@ -230,22 +221,11 @@ action:
         - condition: numeric_state
           entity_id: !input sensor_control
           above: !input set_bt_temp #var_set_temperature #
-        #- condition: template
-        #  value_template: "{{ states( var_sensor_control ) | float(0) > var_set_temperature }}" #sensor temp is above current thermostat temp
         then: # set thermostate to off
           - service: better_thermostat.set_temp_target_temperature
             data:
               temperature: 5.0 #!input set_bt_temp_after
             target: !input thermostat_target
-          #- delay:
-          #    hours: 0
-          #    minutes: 1
-          #    seconds: 0
-          #    milliseconds: 0
-          #- service: climate.set_hvac_mode
-          #  data:
-          #    hvac_mode: "off"
-          #  target: !input thermostat_target
         else: # set thermostate to heat and set target temperature
           - service: climate.set_hvac_mode
             data:
@@ -271,22 +251,11 @@ action:
             - condition: numeric_state
               entity_id: !input sensor_control
               above: !input set_bt_temp_after #set_temperature #
-            #- condition: template
-            #  value_template: "{{ states( var_sensor_control ) | float(0) > var_set_temperature }}" #sensor temp is above current thermostat temp
             then:
               - service: better_thermostat.set_temp_target_temperature
                 data:
                   temperature: 5.0 #!input set_bt_temp_after
                 target: !input thermostat_target
-              #- delay:
-              #    hours: 0
-              #    minutes: 1
-              #    seconds: 0
-              #    milliseconds: 0
-              #- service: climate.set_hvac_mode
-              #  data:
-              #    hvac_mode: "off"
-              #  target: !input thermostat_target
             else:
               - service: climate.set_hvac_mode
                 data:
