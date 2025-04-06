@@ -43,7 +43,7 @@ blueprint:
             - label: "August"
               value: 8
             - label: "September"
-              value: 8
+              value: 9
             - label: "October"
               value: 10
             - label: "November"
