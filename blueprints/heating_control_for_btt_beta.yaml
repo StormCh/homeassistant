@@ -8,18 +8,6 @@ blueprint:
   domain: automation
   source_url: https://github.com/StormCh/homeassistant/blob/main/blueprints/heating_control_for_btt_beta.yaml
   input:
-    date_from:
-      name: Month from
-      description: (Required) Select date to start heating period. For example X. October, using October as Startdate.
-      selector:
-        date:
-
-    date_to:
-      name: Month to
-      description: (Required) Select date to end heating period. For example Y. March, using April as Enddate.
-      selector:
-        date:
-
     month_selector:
       name: Month Selector
       description: (Required) Select one or more months for the heating period.
@@ -182,8 +170,7 @@ condition: []
 
 action:
   - variables:
-      var_date_from: !input date_from
-      var_date_to: !input date_to
+      var_month_selector: !input month_selector
       var_bt_times_schedule: !input bt_times_schedule
       var_input_persons: !input input_persons
       var_zone_entity: !input zone_entity
@@ -199,16 +186,6 @@ action:
       var_is_anybody_home_n: "{{ expand( var_input_persons ) | selectattr('state', 'eq', var_zone_name) | list | count }}" #normal case
       var_is_anybody_home_u: "{{ expand( var_input_persons ) | selectattr('state', 'eq', var_zone_uname) | list | count }}" #upper case
       var_is_anybody_home: "{{ ( var_is_anybody_home_l + var_is_anybody_home_n + var_is_anybody_home_u ) > 0 }}"
-      var_date_from_month: "{{ ( var_date_from | as_datetime ).month }}"
-      var_date_from_day: "{{ ( var_date_from | as_datetime ).day }}"
-      var_date_to_month: "{{ ( var_date_to | as_datetime ).month }}"
-      var_date_to_day: "{{ ( var_date_to | as_datetime ).day }}"
-      #var_set_temperature: >-
-      #  {% if var_thermostat_target[entity_id].lower is defined %}
-      #    {{ state_attr( var_thermostat_target[entity_id] | default , 'temperature' ) | float(0) }}
-      #  {% else %}
-      #    {{ state_attr( var_thermostat_target[entity_id][0] | default , 'temperature' ) | float(0) }}
-      #  {% endif %}
 
   - if: #trigger to idle reset to after temp
       - condition: trigger
@@ -237,8 +214,8 @@ action:
         target: !input thermostat_target
 
   - if:
-      - condition: template # is current date between date_from and date_to
-        value_template: "{{ now().month >= var_date_from_month or now().month <= var_date_to_month }}"
+      - condition: template # is current month in selected months
+        value_template: "{{ now().month in var_month_selector }}"
       - condition: state # and selected schedule turns to on
         entity_id: !input bt_times_schedule
         state: "on"
