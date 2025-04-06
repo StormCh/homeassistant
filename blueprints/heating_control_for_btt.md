@@ -15,7 +15,7 @@ Heating blueprint for BT Thermostats with Schedule or Timer Event. Scheduler/Tim
 
 ## Version 0.15.0
 
-* current todo: change from date "from" "to" to month selector 
+* change from date "from" "to" to month selector
 
 ## Version 0.14.0
 
