@@ -52,6 +52,7 @@ blueprint:
               value: 12
           multiple: true
           mode: dropdown
+          default: [10,11,12,1,2,3] # October, November, December, January, February, March
 
     zone_entity:
       name: Zone
