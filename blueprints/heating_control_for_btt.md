@@ -13,6 +13,10 @@ Heating blueprint for BT Thermostats with Schedule or Timer Event. Scheduler/Tim
 
 ## History
 
+## Version 0.15.0
+
+* current todo: change from date "from" "to" to month selector 
+
 ## Version 0.14.0
 
 * fix lower, normal, upper written zone name
