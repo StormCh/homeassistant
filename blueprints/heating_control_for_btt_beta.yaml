@@ -20,16 +20,25 @@ blueprint:
       selector:
         date:
 
-    month_selector:
-      name: Month Selector
-      description: (Required) Select month to start heating period. For example X. October, using October as Startdate.
-      selector:
-        number:
-          min: 1
-          max: 12
-          step: 1
-          unit_of_measurement: month
-          multiple: true
+  month_selector:
+    name: Month Selector
+    description: (Required) Select one or more months for the heating period.
+    selector:
+      select:
+        options:
+          - January
+          - February
+          - March
+          - April
+          - May
+          - June
+          - July
+          - August
+          - September
+          - October
+          - November
+          - December
+        multiple: true
 
     zone_entity:
       name: Zone
