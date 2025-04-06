@@ -11,6 +11,7 @@ blueprint:
     month_selector:
       name: Month Selector
       description: (Required) Select one or more months for the heating period.
+      default: [10,11,12,1,2,3]
       selector:
         select:
           options:
