@@ -5,22 +5,12 @@ blueprint:
     
     It uses a icons 54156 (solar-green), 50557 (solar-white-dyn), 50546 (solar-static) that you need to install.
 
-    **Version 0.0.2**
+    **Version 0.0.3**
 
   domain: automation
   source_url: https://github.com/StormCh/homeassistant/blob/main/blueprints/awtrix_solar.yaml
 
   input:
-    awtrix_1:
-      name: AWTRIX Device
-      description: Select the Awtrix device
-      selector:
-        device:
-          integration: mqtt
-          manufacturer: Blueforcer
-          model: AWTRIX
-          multiple: true
-
     awtrix:
       name: Awtrix Display
       description: Select the Awtrix device.
