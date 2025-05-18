@@ -5,6 +5,11 @@ blueprint:
    
    **Version 0.0.1**
 
+   **Author:** [StormCh](https://github.com/StormCh/homeassistant/tree/main)
+
+   **Versions:**
+    - 0.0.1: Initial version
+    
   domain: automation
   source_url: https://github.com/StormCh/homeassistant/blob/main/blueprints/awtrix_show_entity.yaml
   input:
