@@ -4,7 +4,7 @@ blueprint:
   description: >
     ## AWTRIX Night Clock
 
-    **Version 0.0.3**
+    **Version 0.0.4**
 
     This blueprint provides a night clock mode for AWTRIX Light. It allows you to personalize various aspects of the clockface to suit your preferences.
 
@@ -23,6 +23,7 @@ blueprint:
     **Author:** [StormCh](https://github.com/StormCh/homeassistant/tree/main)
 
     **Versions:**
+    - 0.0.4: fix time comparison
     - 0.0.3: fix sun localtime
     - 0.0.2: Added option to use sunset time for night mode time and/or sunrise for day mode time.
     - 0.0.1: Initial version
@@ -333,12 +334,12 @@ trigger:
       {% if use_sunrise_as_day_start %}
         {% set sunrise = state_attr('sun.sun', 'next_rising') %}
         {% if sunrise is string %}
-          {{ now().strftime('%H:%M:%S') == as_datetime(sunrise).astimezone().strftime('%H:%M:%S') }}
+          {{ now().strftime('%H:%M') == as_datetime(sunrise).astimezone().strftime('%H:%M') }}
         {% else %}
-          {{ now().strftime('%H:%M:%S') == sunrise.astimezone().strftime('%H:%M:%S') }}
+          {{ now().strftime('%H:%M') == sunrise.astimezone().strftime('%H:%M') }}
         {% endif %}
       {% else %}
-        {{ now().strftime('%H:%M:%S') == wake_up_time }}
+        {{ now().strftime('%H:%M') == wake_up_time[:5] }}
       {% endif %}
     id: wakeup_timer
 
@@ -347,12 +348,12 @@ trigger:
       {% if use_sunset_as_night_start %}
         {% set sunset = state_attr('sun.sun', 'next_setting') %}
         {% if sunset is string %}
-          {{ now().strftime('%H:%M:%S') == as_datetime(sunset).astimezone().strftime('%H:%M:%S') }}
+          {{ now().strftime('%H:%M') == as_datetime(sunset).astimezone().strftime('%H:%M') }}
         {% else %}
-          {{ now().strftime('%H:%M:%S') == sunset.astimezone().strftime('%H:%M:%S') }}
+          {{ now().strftime('%H:%M') == sunset.astimezone().strftime('%H:%M') }}
         {% endif %}
       {% else %}
-        {{ now().strftime('%H:%M:%S') == sleep_time }}
+        {{ now().strftime('%H:%M') == sleep_time[:5] }}
       {% endif %}
     id: sleep_timer
 
