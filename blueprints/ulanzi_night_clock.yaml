@@ -4,6 +4,8 @@ blueprint:
   description: >
     ## AWTRIX Night Clock
 
+    **Version 0.0.2**
+
     This blueprint provides a night clock mode for AWTRIX Light. It allows you to personalize various aspects of the clockface to suit your preferences.
 
     ### Screenshot
@@ -18,6 +20,12 @@ blueprint:
 
     AWTRIX v0.72 or higher
 
+    **Author:** [StormCh](https://github.com/StormCh/homeassistant/tree/main)
+
+    **Versions:**
+    - 0.0.2: Added option to use sunset time for night mode time and/or sunrise for day mode time.
+    - 0.0.1: Initial version
+
   domain: automation
   input:
     awtrix:
@@ -30,6 +38,7 @@ blueprint:
               manufacturer: Blueforcer
               model: AWTRIX 3
           multiple: true
+
     sleep_time:
       name: Night mode time
       description: At what time does the clock need to activate night mode?
@@ -37,12 +46,26 @@ blueprint:
         time: {}
       default: "23:00:00"
 
+    use_sunset_as_night_start:
+      name: Use sunset as Night mode time
+      description: Use sunset time instead of fixed time for Night mode time.
+      selector:
+        boolean:
+      default: false
+
     wake_up_time:
       name: Day mode time
       description: At what time does the clock need activate day mode?
       selector:
         time: {}
       default: "08:00:00"
+
+    use_sunrise_as_day_start:
+      name: Use sunrise as Day mode time
+      description: Use sunrise time instead of fixed time for Day mode time.
+      selector:
+        boolean:
+      default: false
 
     sleep_settings_atrans:
       name: Enable automatic app transition in night mode.
@@ -241,6 +264,8 @@ variables:
   device_ids: !input awtrix
   wake_up_time: !input wake_up_time
   sleep_time: !input sleep_time
+  use_sunset_as_night_start: !input use_sunset_as_night_start
+  use_sunrise_as_day_start: !input use_sunrise_as_day_start
   wakeup_weekday_bar: !input wakeup_weekday_bar
   sleep_weekday_bar: !input sleep_weekday_bar
   wakeup_settings_atrans: !input wakeup_settings_atrans
@@ -293,14 +318,35 @@ variables:
       "WDCA": {{ wakeup_active_weekday_maker_color }},
       "WDCI": {{ wakeup_inactive_weekday_maker_color }}
     }
+
+#trigger:
+#  - platform: time
+#    at: !input wake_up_time
+#    id: wakeup_timer
+#  - platform: time
+#    at: !input sleep_time
+#    id: sleep_timer
 trigger:
-  - platform: time
-    at: !input wake_up_time
+  - platform: template
+    value_template: >-
+      {% if use_sunrise_as_day_start %}
+        {{ now().strftime('%H:%M:%S') == state_attr('sun.sun', 'next_rising')[11:19] }}
+      {% else %}
+        {{ now().strftime('%H:%M:%S') == wake_up_time }}
+      {% endif %}
     id: wakeup_timer
-  - platform: time
-    at: !input sleep_time
+
+  - platform: template
+    value_template: >-
+      {% if use_sunset_as_night_start %}
+        {{ now().strftime('%H:%M:%S') == state_attr('sun.sun', 'next_setting')[11:19] }}
+      {% else %}
+        {{ now().strftime('%H:%M:%S') == sleep_time }}
+      {% endif %}
     id: sleep_timer
+
 condition: []
+
 action:
   - repeat:
       for_each: "{{ awtrix_devices }}"
