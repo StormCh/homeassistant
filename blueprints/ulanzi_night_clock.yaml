@@ -320,6 +320,29 @@ variables:
       "WDCA": {{ wakeup_active_weekday_maker_color }},
       "WDCI": {{ wakeup_inactive_weekday_maker_color }}
     }
+  wakeup_target_time: >-
+    {% if use_sunrise_as_day_start %}
+      {% set sunrise = state_attr('sun.sun', 'next_rising') %}
+      {% if sunrise is string %}
+        {{ as_datetime(sunrise).astimezone().strftime('%H:%M:%S') }}
+      {% else %}
+        {{ sunrise.astimezone().strftime('%H:%M:%S') }}
+      {% endif %}
+    {% else %}
+      {{ wake_up_time[:8] }}
+    {% endif %}
+  sleep_target_time: >-
+    {% if use_sunset_as_night_start %}
+      {% set sunset = state_attr('sun.sun', 'next_setting') %}
+      {% if sunset is string %}
+        {{ as_datetime(sunset).astimezone().strftime('%H:%M:%S') }}
+      {% else %}
+        {{ sunset.astimezone().strftime('%H:%M:%S') }}
+      {% endif %}
+    {% else %}
+      {{ sleep_time[:8] }}
+    {% endif %}
+
 
 #trigger:
 #  - platform: time
@@ -328,33 +351,13 @@ variables:
 #  - platform: time
 #    at: !input sleep_time
 #    id: sleep_timer
-trigger:
-  - platform: template
-    value_template: >-
-      {% if use_sunrise_as_day_start %}
-        {% set sunrise = state_attr('sun.sun', 'next_rising') %}
-        {% if sunrise is string %}
-          {{ now().strftime('%H:%M') == as_datetime(sunrise).astimezone().strftime('%H:%M') }}
-        {% else %}
-          {{ now().strftime('%H:%M') == sunrise.astimezone().strftime('%H:%M') }}
-        {% endif %}
-      {% else %}
-        {{ now().strftime('%H:%M') == wake_up_time[:5] }}
-      {% endif %}
-    id: wakeup_timer
 
-  - platform: template
-    value_template: >-
-      {% if use_sunset_as_night_start %}
-        {% set sunset = state_attr('sun.sun', 'next_setting') %}
-        {% if sunset is string %}
-          {{ now().strftime('%H:%M') == as_datetime(sunset).astimezone().strftime('%H:%M') }}
-        {% else %}
-          {{ now().strftime('%H:%M') == sunset.astimezone().strftime('%H:%M') }}
-        {% endif %}
-      {% else %}
-        {{ now().strftime('%H:%M') == sleep_time[:5] }}
-      {% endif %}
+trigger:
+  - platform: time
+    at: !input wakeup_target_time
+    id: wakeup_timer
+  - platform: time
+    at: !input sleep_target_time
     id: sleep_timer
 
 condition: []
