@@ -5,11 +5,12 @@ blueprint:
     
     It uses a icons 54156 (solar-green), 50557 (solar-white-dyn), 50546 (solar-static) that you need to install.
 
-    **Version 0.0.5**
+    **Version 0.0.6**
 
     **Author:** [StormCh](https://github.com/StormCh/homeassistant/tree/main)
 
     **Versions:**
+    - 0.0.6: fix sunset
     - 0.0.5: Added option to use sunset time as night start.
     - 0.0.4: Update when entity state changes.
 
@@ -127,7 +128,13 @@ variables:
   payload: >-
     {"icon":"{{ power_level_icon }}", "text": "{{ power_level_text }}",  "color": "{{ power_level_color }}"}
   
-  sunset_time: "{{ state_attr('sun.sun', 'next_setting') | as_local | string | regex_replace('^.*T(\\d{2}:\\d{2}):.*$', '\\1') }}"
+  sunset_time: >-
+    {% set s = state_attr('sun.sun', 'next_setting') %}
+    {% if s is string %}
+      {{ as_datetime(s).astimezone().strftime('%H:%M') }}
+    {% else %}
+      {{ s.astimezone().strftime('%H:%M') }}
+    {% endif %}
   use_sunset_as_night_start: !input use_sunset_as_night_start
   night_starts_after_time: !input night_starts_after_time
   #night_start: !input night_starts_after_time
