@@ -329,7 +329,7 @@ variables:
         {{ sunrise.astimezone().strftime('%H:%M:%S') }}
       {% endif %}
     {% else %}
-      {{ wake_up_time[:8] }}
+      {{ wake_up_time[:5] }}
     {% endif %}
   sleep_target_time: >-
     {% if use_sunset_as_night_start %}
@@ -340,7 +340,7 @@ variables:
         {{ sunset.astimezone().strftime('%H:%M:%S') }}
       {% endif %}
     {% else %}
-      {{ sleep_time[:8] }}
+      {{ sleep_time[:5] }}
     {% endif %}
 
 
@@ -355,11 +355,11 @@ variables:
 trigger:
   - platform: template
     value_template: >
-      {{ now().strftime('%H:%M') == (wakeup_target_time[:5]) }}
+      {{ now().strftime('%H:%M') == (wakeup_target_time) }}
     id: wakeup_timer
   - platform: template
     value_template: >
-      {{ now().strftime('%H:%M') == (sleep_target_time[:5]) }}
+      {{ now().strftime('%H:%M') == (sleep_target_time) }}
     id: sleep_timer
 
 condition: []
