@@ -330,7 +330,12 @@ trigger:
   - platform: template
     value_template: >-
       {% if use_sunrise_as_day_start %}
-        {{ now().strftime('%H:%M:%S') == state_attr('sun.sun', 'next_rising')[11:19] }}
+        {% set sunrise = state_attr('sun.sun', 'next_rising') %}
+        {% if sunrise is string %}
+          {{ now().strftime('%H:%M:%S') == as_datetime(sunrise).astimezone().strftime('%H:%M:%S') }}
+        {% else %}
+          {{ now().strftime('%H:%M:%S') == sunrise.astimezone().strftime('%H:%M:%S') }}
+        {% endif %}
       {% else %}
         {{ now().strftime('%H:%M:%S') == wake_up_time }}
       {% endif %}
@@ -339,7 +344,12 @@ trigger:
   - platform: template
     value_template: >-
       {% if use_sunset_as_night_start %}
-        {{ now().strftime('%H:%M:%S') == state_attr('sun.sun', 'next_setting')[11:19] }}
+        {% set sunset = state_attr('sun.sun', 'next_setting') %}
+        {% if sunset is string %}
+          {{ now().strftime('%H:%M:%S') == as_datetime(sunset).astimezone().strftime('%H:%M:%S') }}
+        {% else %}
+          {{ now().strftime('%H:%M:%S') == sunset.astimezone().strftime('%H:%M:%S') }}
+        {% endif %}
       {% else %}
         {{ now().strftime('%H:%M:%S') == sleep_time }}
       {% endif %}
