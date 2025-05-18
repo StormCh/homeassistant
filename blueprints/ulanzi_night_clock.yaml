@@ -4,7 +4,7 @@ blueprint:
   description: >
     ## AWTRIX Night Clock
 
-    **Version 0.0.2**
+    **Version 0.0.3**
 
     This blueprint provides a night clock mode for AWTRIX Light. It allows you to personalize various aspects of the clockface to suit your preferences.
 
@@ -23,6 +23,7 @@ blueprint:
     **Author:** [StormCh](https://github.com/StormCh/homeassistant/tree/main)
 
     **Versions:**
+    - 0.0.3 fix sun localtime
     - 0.0.2: Added option to use sunset time for night mode time and/or sunrise for day mode time.
     - 0.0.1: Initial version
 
