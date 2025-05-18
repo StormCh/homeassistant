@@ -1,6 +1,10 @@
 blueprint:
-  name: AWTRIX show entity
-  description: Show entity
+  name: AWTRIX Show Entity
+  description: >
+   Show entity
+   
+   **Version 0.0.1**
+
   domain: automation
   source_url: https://github.com/StormCh/homeassistant/blob/main/blueprints/awtrix_show_entity.yaml
   input:
