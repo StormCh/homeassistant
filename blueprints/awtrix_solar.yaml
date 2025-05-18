@@ -5,7 +5,13 @@ blueprint:
     
     It uses a icons 54156 (solar-green), 50557 (solar-white-dyn), 50546 (solar-static) that you need to install.
 
-    **Version 0.0.4**
+    **Version 0.0.5**
+
+    **Author:** [StormCh](https://github.com/StormCh/homeassistant/tree/main)
+
+    **Versions:**
+    - 0.0.5: Added option to use sunset time as night start.
+    - 0.0.4: Update when entity state changes.
 
   domain: automation
   source_url: https://github.com/StormCh/homeassistant/blob/main/blueprints/awtrix_solar.yaml
@@ -19,6 +25,7 @@ blueprint:
           filter:
           - manufacturer: Blueforcer
           multiple: true
+
     power_source:
       name: Power Sensor
       description: A sensor providing the current power received from your solar system.
@@ -27,6 +34,7 @@ blueprint:
           domain:
             - sensor
           multiple: false
+
     threshold_high:
       name: Threshold for high solar production (W)
       description: The threshold above which the energy production of your solar system should be visualized as high. Input in Watts (W).
@@ -37,6 +45,7 @@ blueprint:
           unit_of_measurement: Watt
           mode: slider
       default: 400
+
     threshold_low:
       name: Threshold for low solar production (W)
       description: The threshold below which the energy production of your solar system should be visualized as low. Input in Watts (W).
@@ -47,31 +56,44 @@ blueprint:
           unit_of_measurement: Watt
           mode: slider
       default: 100
+
     skip_if_zero_watts:
       name: Hide solar production if at 0 Watts
       description: 'This will not show the solar energy production on your awtrix if the production is below 0 Watts.'
       selector:
         boolean:
       default: false
+
     skip_during_night_hours:
       name: Hide solar production during night time
       description: 'This will not show the solar energy production on your awtrix during night hours (as specified below).'
       selector:
         boolean:
       default: false
+
     night_starts_after_time:
       name: Night Time Start
       description: Set the start of the night time.
       default: 00:00:00
       selector:
-        time: {}
+        time: {}    
+    
+    use_sunset_as_night_start:
+      name: Use sunset as night start
+      description: Use sunset time instead of fixed time for night start.
+      selector:
+        boolean:
+      default: false
+
     night_ends_after_time:
       name: Night Time End
       description: Set the end of the night time.
-      default: 00:00:00
+      default: 06:00:00
       selector:
         time: {}
+
 mode: single
+
 variables:
   device_ids: !input awtrix
   devices_topics: >-
@@ -104,7 +126,17 @@ variables:
   skip_during_night_hours: !input skip_during_night_hours
   payload: >-
     {"icon":"{{ power_level_icon }}", "text": "{{ power_level_text }}",  "color": "{{ power_level_color }}"}
-  night_start: !input night_starts_after_time
+  
+  sunset_time: "{{ state_attr('sun.sun', 'next_setting') | as_local | string | regex_replace('^.*T(\\d{2}:\\d{2}):.*$', '\\1') }}"
+  use_sunset_as_night_start: !input use_sunset_as_night_start
+  night_starts_after_time: !input night_starts_after_time
+  #night_start: !input night_starts_after_time
+  night_start: >
+    {% if use_sunset_as_night_start %}
+      {{ sunset_time }}
+    {% else %}
+      {{ night_starts_after_time }}
+    {% endif %}
   night_end: !input night_ends_after_time
 
 trigger:
@@ -114,6 +146,7 @@ trigger:
     entity_id: !input power_source
 
 condition:
+
 action:
   - choose:
     - alias: "Skipping"
@@ -135,6 +168,7 @@ action:
                 retain: false
                 topic: "{{ repeat.item }}"
                 payload: '{}'
+
     - alias: "Not skipping"
       conditions:
       - condition: template
