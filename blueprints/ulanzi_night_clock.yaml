@@ -353,11 +353,13 @@ variables:
 #    id: sleep_timer
 
 trigger:
-  - platform: time
-    at: !input wakeup_target_time
+  - platform: template
+    value_template: >
+      {{ now().strftime('%H:%M') == (wakeup_target_time[:5]) }}
     id: wakeup_timer
-  - platform: time
-    at: !input sleep_target_time
+  - platform: template
+    value_template: >
+      {{ now().strftime('%H:%M') == (sleep_target_time[:5]) }}
     id: sleep_timer
 
 condition: []
