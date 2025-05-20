@@ -4,7 +4,7 @@ blueprint:
   description: >
     ## AWTRIX Night Clock
 
-    **Version 0.0.6**
+    **Version 0.0.7**
 
     This blueprint provides a night clock mode for AWTRIX Light. It allows you to personalize various aspects of the clockface to suit your preferences.
 
@@ -23,6 +23,7 @@ blueprint:
     **Author:** [StormCh](https://github.com/StormCh/homeassistant/tree/main)
 
     ### Versionhistory
+    * 0.0.7: improve time conditions
     * 0.0.6: fix time trigger
     * 0.0.5: calc time in variable
     * 0.0.4: fix time comparison
@@ -355,6 +356,9 @@ variables:
 #    id: sleep_timer
 
 trigger:
+  - platform: time_pattern
+    minutes: "/1"
+    id: time_check
   - platform: time
     at: "{{ wakeup_target_time }}"
     id: wakeup_timer
@@ -366,6 +370,8 @@ trigger:
 condition: []
 
 action:
+  - variables:
+      now_time: "{{ now().strftime('%H:%M:%S') }}"
   - repeat:
       for_each: "{{ awtrix_devices }}"
       sequence:
@@ -376,9 +382,13 @@ action:
                     {{ states(repeat.item.entity) not in ['unavailable', 'unknown'] }}
               sequence:
                 - if:
-                    - condition: trigger
-                      id:
-                        - wakeup_timer
+                    - or:
+                        - condition: trigger
+                          id:
+                            - wakeup_timer
+                        - condition: template
+                          value_template: >
+                            {{ now_time >= wakeup_target_time }}
                   then:
                     - service: mqtt.publish
                       data:
@@ -387,9 +397,13 @@ action:
                         topic: "{{ repeat.item.topic ~ '/settings'}}"
                         payload: "{{ payload_wakeup_settings }}"
                 - if:
-                    - condition: trigger
-                      id:
-                        - sleep_timer
+                    - or:
+                        - condition: trigger
+                          id:
+                            - sleep_timer
+                        - condition: template
+                          value_template: >
+                            {{ now_time >= sleep_target_time }}
                   then:
                     - service: mqtt.publish
                       data:
