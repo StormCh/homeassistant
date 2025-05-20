@@ -22,13 +22,13 @@ blueprint:
 
     **Author:** [StormCh](https://github.com/StormCh/homeassistant/tree/main)
 
-    **Versions:**
-    # 0.0.6: fix time trigger
-    # 0.0.5: calc time in variable
-    # 0.0.4: fix time comparison
-    # 0.0.3: fix sun localtime
-    # 0.0.2: Added option to use sunset time for night mode time and/or sunrise for day mode time.
-    # 0.0.1: Initial version
+    ### Versionhistory
+    * 0.0.6: fix time trigger
+    * 0.0.5: calc time in variable
+    * 0.0.4: fix time comparison
+    * 0.0.3: fix sun localtime
+    * 0.0.2: Added option to use sunset time for night mode time and/or sunrise for day mode time.
+    * 0.0.1: Initial version
 
   domain: automation
   input:
