@@ -4,7 +4,7 @@ blueprint:
   description: >
     ## AWTRIX Night Clock
 
-    **Version 0.0.9**
+    **Version 0.0.10**
 
     This blueprint provides a night clock mode for AWTRIX Light. It allows you to personalize various aspects of the clockface to suit your preferences.
 
@@ -23,6 +23,8 @@ blueprint:
     **Author:** [StormCh](https://github.com/StormCh/homeassistant/tree/main)
 
     ### Versionhistory
+
+    * 0.0.10: fix else if condition
 
     * 0.0.9: update trigger and conditions
 
@@ -387,7 +389,7 @@ action:
                         retain: false
                         topic: "{{ repeat.item.topic ~ '/settings'}}"
                         payload: "{{ payload_wakeup_settings }}"
-                - else:
+                  else:
                     - service: mqtt.publish
                       data:
                         qos: 0
