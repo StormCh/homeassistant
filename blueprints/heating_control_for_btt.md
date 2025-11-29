@@ -13,6 +13,10 @@ Heating blueprint for BT Thermostats with Schedule or Timer Event. Scheduler/Tim
 
 ## History
 
+## Version 0.16.0
+
+* set thermostat to off after decrease temp to minimum
+
 ## Version 0.15.0
 
 * change from date "from" "to" to month selector
