@@ -3,7 +3,7 @@ blueprint:
   description: >
     # Heating Control for BT Thermostats
 
-    **Version 0.16.2**
+    **Version 0.16.3**
 
   domain: automation
   source_url: https://github.com/StormCh/homeassistant/blob/main/blueprints/heating_control_for_btt.yaml
@@ -228,7 +228,7 @@ action:
               temperature: 5.0
             target: !input thermostat_target
           - delay:
-            seconds: 30
+              seconds: 30
           - service: better_thermostat.set_temp_target_temperature
             data:
               temperature: !input set_bt_temp_after # was 5.0
@@ -268,7 +268,7 @@ action:
                   temperature: 5.0
                 target: !input thermostat_target
               - delay:
-                seconds: 30
+                  seconds: 30
               - service: better_thermostat.set_temp_target_temperature
                 data:
                   temperature: !input set_bt_temp_after # was 5.0
