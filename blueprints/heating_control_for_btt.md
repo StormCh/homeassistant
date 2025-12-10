@@ -13,6 +13,10 @@ Heating blueprint for BT Thermostats with Schedule or Timer Event. Scheduler/Tim
 
 ## History
 
+## Version 0.16.2
+
+* try to fix overheating
+
 ## Version 0.16.1
 
 * insteat reseting to 5.0 Degrees, reset to after_temp
