@@ -169,7 +169,6 @@ action:
       var_zone_lname: '{{ states[var_zone_entity].name|lower }}' #lowering the name works.
       var_zone_name: '{{ states[var_zone_entity].name }}'
       var_zone_uname: '{{ states[var_zone_entity].name|upper }}' #upper the name works.
-      var_thermostat_target: !input thermostat_target
       var_set_bt_temp: !input set_bt_temp
       var_set_bt_temp_offset: "{{ ( var_set_bt_temp + 0.5 ) | float }}" # add x degree as offset to avoid rapid on/off switching
       var_set_bt_temp_after: !input set_bt_temp_after
