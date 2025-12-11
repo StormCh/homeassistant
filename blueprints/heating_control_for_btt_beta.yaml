@@ -3,7 +3,7 @@ blueprint:
   description: >
     # Heating Control for BT Thermostats
 
-    **Version 0.17.0**
+    **Version 0.17.1**
 
   domain: automation
   source_url: https://github.com/StormCh/homeassistant/blob/main/blueprints/heating_control_for_btt_beta.yaml
@@ -188,11 +188,11 @@ action:
       - service: climate.set_hvac_mode
         data:
           hvac_mode: heat
-        target: var_thermostat_target
+        target: !input thermostat_target
       - service: better_thermostat.set_temp_target_temperature
         data:
-          temperature: var_set_bt_temp_after
-        target: var_thermostat_target
+          temperature: "{{ var_set_bt_temp_after }}"
+        target: !input thermostat_target
 
   - if: #booster trigger to active set to booster temp
       - condition: trigger
@@ -201,11 +201,11 @@ action:
       - service: climate.set_hvac_mode
         data:
           hvac_mode: heat
-        target: var_thermostat_target
+        target: !input thermostat_target
       - service: better_thermostat.set_temp_target_temperature
         data:
-          temperature: var_set_boost_bt_temp
-        target: var_thermostat_target
+          temperature: "{{ var_set_boost_bt_temp }}"
+        target: !input thermostat_target
 
   - if: #normal trigger conditions
       - condition: template # is current month in selected months
@@ -234,27 +234,27 @@ action:
               - service: better_thermostat.set_temp_target_temperature
                 data:
                   temperature: 5.0
-                target: var_thermostat_target
+                target: !input thermostat_target
               - delay:
                   seconds: 90
               - service: better_thermostat.set_temp_target_temperature
                 data:
-                  temperature: var_set_bt_temp_after # was 5.0
-                target: var_thermostat_target
+                  temperature: "{{ var_set_bt_temp_after }}"
+                target: !input thermostat_target
               - service: climate.set_hvac_mode
                 data:
                   hvac_mode: 'off'
-                target: var_thermostat_target            
+                target: !input thermostat_target            
 
         else: # set thermostate to heat and set target temperature
           - service: climate.set_hvac_mode
             data:
               hvac_mode: heat
-            target: var_thermostat_target
+            target: !input thermostat_target
           - service: better_thermostat.set_temp_target_temperature
             data:
-              temperature: var_set_bt_temp
-            target: var_thermostat_target
+              temperature: "{{ var_set_bt_temp }}"
+            target: !input thermostat_target
 
     else:
       - if:
@@ -276,26 +276,26 @@ action:
                   - service: better_thermostat.set_temp_target_temperature
                     data:
                       temperature: 5.0
-                    target: var_thermostat_target
+                    target: !input thermostat_target
                   - delay:
                       seconds: 90
                   - service: better_thermostat.set_temp_target_temperature
                     data:
-                      temperature: var_set_bt_temp_after
-                    target: var_thermostat_target
+                      temperature: "{{ var_set_bt_temp_after }}"
+                    target: !input thermostat_target
                   - service: climate.set_hvac_mode
                     data:
                       hvac_mode: 'off'
-                    target: var_thermostat_target
+                    target: !input thermostat_target
             else:
               - service: climate.set_hvac_mode
                 data:
                   hvac_mode: heat
-                target: var_thermostat_target
+                target: !input thermostat_target
               - service: better_thermostat.set_temp_target_temperature
                 data:
-                  temperature: var_set_bt_temp_after
-                target: var_thermostat_target
+                  temperature: "{{ var_set_bt_temp_after }}"
+                target: !input thermostat_target
         
         else: # timer boost is active
 
