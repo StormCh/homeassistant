@@ -3,7 +3,7 @@ blueprint:
   description: >
     # Heating Control for BT Thermostats
 
-    **Version 0.15.02**
+    **Version 0.17.0**
 
   domain: automation
   source_url: https://github.com/StormCh/homeassistant/blob/main/blueprints/heating_control_for_btt_beta.yaml
@@ -135,28 +135,28 @@ mode: queued
 max_exceeded: silent
 
 trigger:
-  - platform: state
+  - platform: state #schedule control off trigger
     entity_id: !input bt_times_schedule
     from: "on"
     to: "off"
-  - platform: state
+  - platform: state #schedule control on trigger
     entity_id: !input bt_times_schedule
     from: "off"
     to: "on"
-  - platform: state
+  - platform: state #sensor control trigger
     entity_id: !input sensor_control
-  - platform: state
+  - platform: state #presence at zone trigger
     entity_id: !input input_persons
-  - platform: state
+  - platform: state #booster active trigger
     entity_id: !input timer_helper
     to: "active"
     id: "to_active"
-  - platform: state
+  - platform: state #booster idle trigger
     entity_id: !input timer_helper
     to: "idle"
     id: "to_idle"
-  - platform: time_pattern
-    minutes: /5 # every 5 minutes
+  - platform: time_pattern  # every 5 minutes trigger to check conditions
+    minutes: /5
 
 condition: []
 
@@ -171,7 +171,9 @@ action:
       var_zone_uname: '{{ states[var_zone_entity].name|upper }}' #upper the name works.
       var_thermostat_target: !input thermostat_target
       var_set_bt_temp: !input set_bt_temp
+      var_set_bt_temp_offset: "{{ ( var_set_bt_temp + 0.5 ) | float }}" # add x degree as offset to avoid rapid on/off switching
       var_set_bt_temp_after: !input set_bt_temp_after
+      var_set_bt_temp_after_offset: "{{ ( var_set_bt_temp_after + 1.0 ) | float }}" # add x degree as offset to avoid rapid on/off switching
       var_sensor_control: !input sensor_control
       var_timer_helper: !input timer_helper
       var_is_anybody_home_l: "{{ expand( var_input_persons ) | selectattr('state', 'eq', var_zone_lname) | list | count }}" #lower case
@@ -179,92 +181,121 @@ action:
       var_is_anybody_home_u: "{{ expand( var_input_persons ) | selectattr('state', 'eq', var_zone_uname) | list | count }}" #upper case
       var_is_anybody_home: "{{ ( var_is_anybody_home_l + var_is_anybody_home_n + var_is_anybody_home_u ) > 0 }}"
 
-  - if: #trigger to idle reset to after temp
+  - if: #booster trigger to idle reset to after temp
       - condition: trigger
         id: "to_idle"
     then:
       - service: climate.set_hvac_mode
         data:
           hvac_mode: heat
-        target: !input thermostat_target
+        target: var_thermostat_target
       - service: better_thermostat.set_temp_target_temperature
         data:
-          temperature: !input set_bt_temp_after
-        target: !input thermostat_target
+          temperature: var_set_bt_temp_after
+        target: var_thermostat_target
 
-  - if: #trigger to active set to set temp
+  - if: #booster trigger to active set to booster temp
       - condition: trigger
         id: "to_active"
     then:
       - service: climate.set_hvac_mode
         data:
           hvac_mode: heat
-        target: !input thermostat_target
+        target: var_thermostat_target
       - service: better_thermostat.set_temp_target_temperature
         data:
-          temperature: !input set_boost_bt_temp
-        target: !input thermostat_target
+          temperature: var_set_boost_bt_temp
+        target: var_thermostat_target
 
-  - if:
+  - if: #normal trigger conditions
       - condition: template # is current month in selected months
         value_template: "{{ now().month | string in var_month_selector }}"
       - condition: state # and selected schedule turns to on
-        entity_id: !input bt_times_schedule
+        entity_id: var_bt_times_schedule
         state: "on"
       - condition: template # and is anybody at home
         value_template: "{{ var_is_anybody_home == true }}"
       - condition: state # boost timer is not active
-        entity_id: !input timer_helper
+        entity_id: var_timer_helper
         state: idle
 
     then:
       - if: # if temperature of sensor is above target temperature
         - condition: numeric_state
-          entity_id: !input sensor_control
-          above: !input set_bt_temp #var_set_temperature #
-        then: # set thermostate to off
-          - service: better_thermostat.set_temp_target_temperature
-            data:
-              temperature: 5.0 #!input set_bt_temp_after
-            target: !input thermostat_target
+          entity_id: var_sensor_control
+          above: var_set_bt_temp
+
+        then: # set thermostate to 5deg then wait 30sec then set to after temp then set hvac to off
+          - if: # if temperature of sensor is above target temperature + offset
+            - condition: numeric_state
+              entity_id: var_sensor_control
+              above: var_set_bt_temp_offset
+            then:
+              - service: better_thermostat.set_temp_target_temperature
+                data:
+                  temperature: 5.0
+                target: var_thermostat_target
+              - delay:
+                  seconds: 90
+              - service: better_thermostat.set_temp_target_temperature
+                data:
+                  temperature: var_set_bt_temp_after # was 5.0
+                target: var_thermostat_target
+              - service: climate.set_hvac_mode
+                data:
+                  hvac_mode: 'off'
+                target: var_thermostat_target            
+
         else: # set thermostate to heat and set target temperature
           - service: climate.set_hvac_mode
             data:
               hvac_mode: heat
-            target: !input thermostat_target
+            target: var_thermostat_target
           - service: better_thermostat.set_temp_target_temperature
             data:
-              temperature: !input set_bt_temp
-            target: !input thermostat_target
+              temperature: var_set_bt_temp
+            target: var_thermostat_target
 
     else:
       - if:
         - condition: state  # boost timer is idle
-          entity_id: !input timer_helper
+          entity_id: var_timer_helper
           state: idle
-        then:
-          - service: better_thermostat.set_temp_target_temperature # reset temperature
-            data:
-              temperature: !input set_bt_temp_after
-            target: !input thermostat_target
 
-          - if: # if temperature of sensor is above target temperature
+        then: #reset temperature after booster was active
+          - if: # if temperature of sensor is above target temperature after
             - condition: numeric_state
-              entity_id: !input sensor_control
-              above: !input set_bt_temp_after #set_temperature #
+              entity_id: var_sensor_control
+              above: var_set_bt_temp_after
             then:
-              - service: better_thermostat.set_temp_target_temperature
-                data:
-                  temperature: 5.0 #!input set_bt_temp_after
-                target: !input thermostat_target
+              - if: # if temperature of sensor is above target temperature after + offset
+                - condition: numeric_state
+                  entity_id: var_sensor_control
+                  above: var_set_bt_temp_after_offset
+                then:
+                  - service: better_thermostat.set_temp_target_temperature
+                    data:
+                      temperature: 5.0
+                    target: var_thermostat_target
+                  - delay:
+                      seconds: 90
+                  - service: better_thermostat.set_temp_target_temperature
+                    data:
+                      temperature: var_set_bt_temp_after
+                    target: var_thermostat_target
+                  - service: climate.set_hvac_mode
+                    data:
+                      hvac_mode: 'off'
+                    target: var_thermostat_target
             else:
               - service: climate.set_hvac_mode
                 data:
                   hvac_mode: heat
-                target: !input thermostat_target
+                target: var_thermostat_target
               - service: better_thermostat.set_temp_target_temperature
                 data:
-                  temperature: !input set_bt_temp_after
-                target: !input thermostat_target
-        else: # timer boost active
+                  temperature: var_set_bt_temp_after
+                target: var_thermostat_target
+        
+        else: # timer boost is active
 
