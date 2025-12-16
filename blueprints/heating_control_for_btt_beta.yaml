@@ -232,7 +232,7 @@ action:
                   temperature: 5.0
                 target: !input thermostat_target
               - delay:
-                  seconds: 90
+                  seconds: 60
               - service: better_thermostat.set_temp_target_temperature
                 data:
                   temperature: "{{ var_set_bt_temp_after }}"
@@ -273,7 +273,7 @@ action:
                       temperature: 5.0
                     target: !input thermostat_target
                   - delay:
-                      seconds: 90
+                      seconds: 60
                   - service: better_thermostat.set_temp_target_temperature
                     data:
                       temperature: "{{ var_set_bt_temp_after }}"
