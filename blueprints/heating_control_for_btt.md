@@ -13,13 +13,17 @@ Heating blueprint for BT Thermostats with Schedule or Timer Event. Scheduler/Tim
 
 ## History
 
+## Version 0.17.0
+
+* avoid rapid on/off switching of thermostat, set delay to 60sec and add a offset to target temp and after target temp
+
 ## Version 0.16.3
 
 * fix format
 
 ## Version 0.16.2
 
-* try to fix overheating
+* fix overheating
 
 ## Version 0.16.1
 
