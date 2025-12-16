@@ -3,7 +3,7 @@ blueprint:
   description: >
     # Heating Control for BT Thermostats
 
-    **Version 0.17.2**
+    **Version 0.17.3**
 
   domain: automation
   source_url: https://github.com/StormCh/homeassistant/blob/main/blueprints/heating_control_for_btt_beta.yaml
@@ -171,7 +171,6 @@ action:
       var_set_bt_temp: !input set_bt_temp
       var_set_bt_temp_offset: "{{ ( var_set_bt_temp + 0.5 ) | float }}" # add x degree as offset to avoid rapid on/off switching
       var_set_bt_temp_after: !input set_bt_temp_after
-      var_set_bt_temp_after_offset: "{{ ( var_set_bt_temp_after + 1.0 ) | float }}" # add x degree as offset to avoid rapid on/off switching
       var_set_boost_bt_temp: !input set_boost_bt_temp
       var_sensor_control: !input sensor_control
       var_is_anybody_home_l: "{{ expand( var_input_persons ) | selectattr('state', 'eq', var_zone_lname) | list | count }}" #lower case
@@ -259,15 +258,15 @@ action:
           entity_id: !input timer_helper
           state: idle
 
-        then: #reset temperature after booster was active
+        then: #reset temperature after
           - if: # if temperature of sensor is above target temperature after
             - condition: numeric_state
               entity_id: !input sensor_control
               above: !input set_bt_temp_after
             then:
-              - if: # if temperature of sensor is above target temperature after + offset
+              - if: # if temperature of sensor is above target temperature!!!
                 - condition: template
-                  value_template: "{{ states(var_sensor_control) | float > var_set_bt_temp_after_offset | float }}"
+                  value_template: "{{ states(var_sensor_control) | float > var_set_bt_temp | float }}"
                 then:
                   - service: better_thermostat.set_temp_target_temperature
                     data:
