@@ -3,7 +3,7 @@ blueprint:
   description: >
     # Heating Control for BT Thermostats
 
-    **Version 0.17.0**
+    **Version 0.17.1**
 
   domain: automation
   source_url: https://github.com/StormCh/homeassistant/blob/main/blueprints/heating_control_for_btt.yaml
@@ -206,7 +206,7 @@ action:
 
   - if: #normal trigger conditions
       - condition: template # is current month in selected months
-        value_template: "{{ now().month | string in var_month_selector }}"
+        value_template: "{{ var_month_selector is defined and var_month_selector|length > 0 and now().month | string in var_month_selector }}"
       - condition: state # and selected schedule turns to on
         entity_id: !input bt_times_schedule
         state: "on"
