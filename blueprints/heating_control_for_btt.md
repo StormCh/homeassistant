@@ -13,6 +13,10 @@ Heating blueprint for BT Thermostats with Schedule or Timer Event. Scheduler/Tim
 
 ## History
 
+## Version 0.18.2
+
+* higher after offset
+
 ## Version 0.18.1
 
 * reaad offset for after

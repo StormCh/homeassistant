@@ -3,7 +3,7 @@ blueprint:
   description: >
     # Heating Control for BT Thermostats
 
-    **Version 0.18.1**
+    **Version 0.18.2**
 
   domain: automation
   source_url: https://github.com/StormCh/homeassistant/blob/main/blueprints/heating_control_for_btt.yaml
@@ -171,7 +171,7 @@ action:
       var_set_bt_temp: !input set_bt_temp
       var_set_bt_temp_offset: "{{ ( var_set_bt_temp + 0.5 ) | float }}" # add x degree as offset to avoid rapid on/off switching
       var_set_bt_temp_after: !input set_bt_temp_after
-      var_set_bt_temp_after_offset: "{{ ( var_set_bt_temp_after + 0.5 ) | float }}" # add x degree as offset to avoid rapid on/off switching
+      var_set_bt_temp_after_offset: "{{ ( var_set_bt_temp_after + 1.0 ) | float }}" # add x degree as offset to avoid rapid on/off switching
       var_set_boost_bt_temp: !input set_boost_bt_temp
       var_sensor_control: !input sensor_control
       var_is_anybody_home_l: "{{ expand( var_input_persons ) | selectattr('state', 'eq', var_zone_lname) | list | count }}" #lower case
