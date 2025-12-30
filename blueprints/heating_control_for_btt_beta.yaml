@@ -1,9 +1,9 @@
 blueprint:
-  name: BETATEST ONLY - Heating Control for BT Thermostats
+  name: BETATESTS ONLY - Heating Control for BT Thermostats
   description: >
     # Heating Control for BT Thermostats
 
-    **Version 0.18.0 beta**
+    **Version 0.18.0**
 
   domain: automation
   source_url: https://github.com/StormCh/homeassistant/blob/main/blueprints/heating_control_for_btt_beta.yaml
@@ -137,12 +137,12 @@ max_exceeded: silent
 trigger:
   - platform: state #schedule control off trigger
     entity_id: !input bt_times_schedule
-    from: "on"
     to: "off"
+    id: "to_off"
   - platform: state #schedule control on trigger
     entity_id: !input bt_times_schedule
-    from: "off"
     to: "on"
+    id: "to_on"
   - platform: state #sensor control trigger
     entity_id: !input sensor_control
   - platform: state #presence at zone trigger
@@ -204,10 +204,10 @@ action:
           temperature: "{{ var_set_boost_bt_temp }}"
         target: !input thermostat_target
 
-  - if: #normal trigger conditions
+  - if: #normal trigger AND conditions
       - condition: template # is current month in selected months
         value_template: "{{ var_month_selector is defined and var_month_selector|length > 0 and now().month | string in var_month_selector }}"
-      - condition: state # and selected schedule turns to on
+      - condition: state # and selected schedule is on
         entity_id: !input bt_times_schedule
         state: "on"
       - condition: template # and is anybody at home
@@ -261,8 +261,8 @@ action:
             - condition: numeric_state
               entity_id: !input sensor_control
               above: !input set_bt_temp_after
-            - condition: template
-              value_template: "{{ states(var_sensor_control) | float > var_set_bt_temp | float }}"
+            #- condition: template
+            #  value_template: "{{ states(var_sensor_control) | float > var_set_bt_temp | float }}"
 
             then:
               - service: better_thermostat.set_temp_target_temperature
