@@ -3,7 +3,13 @@ blueprint:
   description: >
     # Heating Control for BT Thermostats
 
-    **Version 0.18.0**
+    **Version 0.19.0**
+
+    Merged in the 0.18.2 anti-flicker fix (offset condition on the after-reset
+    branch) from the stable blueprint. Uses the stable core
+    `climate.set_temperature` service instead of the removed
+    `better_thermostat.set_temp_target_temperature` action (removed upstream
+    in better_thermostat 1.8.0).
 
   domain: automation
   source_url: https://github.com/StormCh/homeassistant/blob/main/blueprints/heating_control_for_btt_beta.yaml
@@ -171,6 +177,7 @@ action:
       var_set_bt_temp: !input set_bt_temp
       var_set_bt_temp_offset: "{{ ( var_set_bt_temp + 0.5 ) | float }}" # add x degree as offset to avoid rapid on/off switching
       var_set_bt_temp_after: !input set_bt_temp_after
+      var_set_bt_temp_after_offset: "{{ ( var_set_bt_temp_after + 1.0 ) | float }}" # add x degree as offset to avoid rapid on/off switching
       var_set_boost_bt_temp: !input set_boost_bt_temp
       var_sensor_control: !input sensor_control
       var_is_anybody_home_l: "{{ expand( var_input_persons ) | selectattr('state', 'eq', var_zone_lname) | list | count }}" #lower case
@@ -186,7 +193,7 @@ action:
         data:
           hvac_mode: heat
         target: !input thermostat_target
-      - service: better_thermostat.set_temp_target_temperature
+      - service: climate.set_temperature
         data:
           temperature: "{{ var_set_bt_temp_after }}"
         target: !input thermostat_target
@@ -199,7 +206,7 @@ action:
         data:
           hvac_mode: heat
         target: !input thermostat_target
-      - service: better_thermostat.set_temp_target_temperature
+      - service: climate.set_temperature
         data:
           temperature: "{{ var_set_boost_bt_temp }}"
         target: !input thermostat_target
@@ -225,13 +232,13 @@ action:
           value_template: "{{ states( var_sensor_control ) | float > var_set_bt_temp_offset | float }}"
 
         then: # set thermostate to 5deg then wait X sec then set to after temp then set hvac to off
-          - service: better_thermostat.set_temp_target_temperature
+          - service: climate.set_temperature
             data:
               temperature: 5.0
             target: !input thermostat_target
           - delay:
               seconds: 60
-          - service: better_thermostat.set_temp_target_temperature
+          - service: climate.set_temperature
             data:
               temperature: "{{ var_set_bt_temp_after }}"
             target: !input thermostat_target
@@ -245,7 +252,7 @@ action:
             data:
               hvac_mode: heat
             target: !input thermostat_target
-          - service: better_thermostat.set_temp_target_temperature
+          - service: climate.set_temperature
             data:
               temperature: "{{ var_set_bt_temp }}"
             target: !input thermostat_target
@@ -261,17 +268,17 @@ action:
             - condition: numeric_state
               entity_id: !input sensor_control
               above: !input set_bt_temp_after
-            #- condition: template
-            #  value_template: "{{ states(var_sensor_control) | float > var_set_bt_temp | float }}"
+            - condition: template
+              value_template: "{{ states(var_sensor_control) | float > var_set_bt_temp_after_offset | float }}"
 
             then:
-              - service: better_thermostat.set_temp_target_temperature
+              - service: climate.set_temperature
                 data:
                   temperature: 5.0
                 target: !input thermostat_target
               - delay:
                   seconds: 60
-              - service: better_thermostat.set_temp_target_temperature
+              - service: climate.set_temperature
                 data:
                   temperature: "{{ var_set_bt_temp_after }}"
                 target: !input thermostat_target
@@ -285,7 +292,7 @@ action:
                 data:
                   hvac_mode: heat
                 target: !input thermostat_target
-              - service: better_thermostat.set_temp_target_temperature
+              - service: climate.set_temperature
                 data:
                   temperature: "{{ var_set_bt_temp_after }}"
                 target: !input thermostat_target
