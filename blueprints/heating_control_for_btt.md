@@ -13,7 +13,11 @@ Heating blueprint for BT Thermostats with Schedule or Timer Event. Scheduler/Tim
 
 ## History
 
-## Version 0.19.0
+## Version 0.20.0 beta
+
+* improvements made by ai
+
+## Version 0.19.0 beta
 
 * Uses the stable core
     `climate.set_temperature` service instead of the removed
