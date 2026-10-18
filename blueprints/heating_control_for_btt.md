@@ -50,7 +50,7 @@ Heating blueprint for BT Thermostats with Schedule or Timer Event. Scheduler/Tim
 
 ## Version 0.16.1
 
-* insteat reseting to 5.0 Degrees, reset to after_temp
+* instead reseting to 5.0 Degrees, reset to after_temp
 
 ## Version 0.16.0
 
