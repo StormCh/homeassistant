@@ -3,7 +3,7 @@ blueprint:
   description: >
     # Heating Control for BT Thermostats
 
-    **Version 0.20.0**
+    **Version 0.20.1**
 
     Merged in the 0.18.2 anti-flicker fix (offset condition on the after-reset
     branch) from the stable blueprint. Uses the stable core
@@ -224,7 +224,7 @@ action:
       var_set_boost_bt_temp: !input set_boost_bt_temp
       var_safety_temp: !input safety_temp
       var_sensor_control: !input sensor_control
-      var_is_anybody_home: "{{ expand( var_input_persons ) | selectattr('state', 'eq', var_zone_slug) | list | count > 0 }}"
+      var_is_anybody_home: "{{ expand(var_input_persons) | map(attribute='state') | map('lower') | select('contains', var_zone_slug) | list | count > 0 }}" # changed from "{{ expand( var_input_persons ) | selectattr('state', 'eq', var_zone_slug) | list | count > 0 }}"
       var_thermostat_target: !input thermostat_target
       # Only entity targeting is supported by this blueprint's selector, so
       # entity_id is always present here.

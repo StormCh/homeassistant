@@ -13,6 +13,10 @@ Heating blueprint for BT Thermostats with Schedule or Timer Event. Scheduler/Tim
 
 ## History
 
+## Version 0.20.1
+
+* fix state of person.x delivers sometime in capitalized sometimes lower case, try to catch this
+
 ## Version 0.20.0
 
 * improvements made by ai
